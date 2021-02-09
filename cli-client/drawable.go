@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/gdamore/tcell/v2"
@@ -92,8 +93,9 @@ func (wt *wrappedText) Draw(s *screen) {
 		if !wt.bounds.VectorInBounds(cursor.add(vector{len(word) - 1, 0})) {
 			needsNewLine = true
 		}
-		// if there are no new lines available, replace the last written character with an ellipsis
-		if needsNewLine && cursor.y+1 > wt.bounds.bottomRight.y {
+		// if there are no new lines available or the word cannot fit on a new line,
+		// replace the last written character with an ellipsis
+		if (needsNewLine && cursor.y+1 > wt.bounds.bottomRight.y) || len(word) > wt.bounds.HorizontalCells() {
 			s.SetContent(cursor.add(vector{-2, 0}), '…', tcell.StyleDefault)
 			return
 		}
@@ -101,12 +103,6 @@ func (wt *wrappedText) Draw(s *screen) {
 		if needsNewLine {
 			cursor.x = wt.bounds.topLeft.x
 			cursor.y++
-			// if the word still wont fit, then there's nothing we can do so truncate and bail
-			// TODO: consider adding mechanism to break a single word over a line?
-			if len(word) > wt.bounds.HorizontalCells() {
-				s.SetContent(cursor, '…', tcell.StyleDefault)
-				return
-			}
 		}
 		// write text
 		for _, c := range word {
@@ -124,5 +120,26 @@ type listItem struct {
 }
 
 func (li *listItem) Draw(s *screen) {
-	// stonks
+	if li.bounds.HorizontalCells() < 7 {
+		panic("must be wider than 7 cells")
+	}
+
+	// draw the shortcut key next to the list item
+	shortcut := wrappedText{
+		bounds: rect{
+			topLeft:     li.bounds.topLeft,
+			bottomRight: li.bounds.topLeft.add(vector{2, 0}),
+		},
+		text: fmt.Sprintf("(%s)", string(li.shortcut)),
+	}
+	shortcut.Draw(s)
+
+	description := wrappedText{
+		bounds: rect{
+			topLeft:     li.bounds.topLeft.add(vector{4, 0}),
+			bottomRight: li.bounds.bottomRight,
+		},
+		text: li.text,
+	}
+	description.Draw(s)
 }

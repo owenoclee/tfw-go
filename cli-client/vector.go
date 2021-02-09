@@ -35,3 +35,10 @@ func (r rect) VectorInBounds(v vector) bool {
 		v.y >= r.topLeft.y &&
 		v.y <= r.bottomRight.y
 }
+
+func (r rect) Transform(v vector) rect {
+	return rect{
+		topLeft:     r.topLeft.add(v),
+		bottomRight: r.bottomRight.add(v),
+	}
+}
