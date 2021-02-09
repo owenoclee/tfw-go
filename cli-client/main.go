@@ -73,7 +73,31 @@ func main() {
 	}
 	l.Draw(s)
 
+	quit := make(chan struct{})
+	go func() {
+		for {
+			ev := s.PollEvent()
+			switch ev := ev.(type) {
+			case *tcell.EventKey:
+				switch ev.Key() {
+				case tcell.KeyRune:
+					if ev.Rune() == 'q' {
+						close(quit)
+						return
+					}
+				}
+			}
+		}
+	}()
+
 	s.Show()
-	time.Sleep(time.Second * 5)
-	s.Fini()
+	for {
+		select {
+		case <-quit:
+			s.Fini()
+			return
+		case <-time.After(time.Millisecond * 50):
+			l.Draw(s)
+		}
+	}
 }
