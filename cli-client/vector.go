@@ -5,58 +5,33 @@ type vector struct {
 	y int
 }
 
-type piece int
-
-// pieces
-const (
-	TopLeftPiece piece = iota
-	BottomLeftPiece
-	TopRightPiece
-	BottomRightPiece
-	HorizontalPiece
-	VerticalPiece
-)
-
-type cellMeta struct {
-	pos  vector
-	kind piece
+func (v1 vector) add(v2 vector) vector {
+	return vector{
+		x: v1.x + v2.x,
+		y: v1.y + v2.y,
+	}
 }
 
-func rectCells(topLeft vector, bottomRight vector) []cellMeta {
-	if topLeft.x > bottomRight.x || topLeft.y > bottomRight.y {
-		return nil
-	}
+type rect struct {
+	topLeft     vector
+	bottomRight vector
+}
 
-	var metaCells []cellMeta
-	for x := topLeft.x; x <= bottomRight.x; x++ {
-		topCell := cellMeta{
-			pos:  vector{x, topLeft.y},
-			kind: HorizontalPiece,
-		}
-		bottomCell := cellMeta{
-			pos:  vector{x, bottomRight.y},
-			kind: HorizontalPiece,
-		}
-		switch x {
-		case topLeft.x:
-			topCell.kind = TopLeftPiece
-			bottomCell.kind = BottomLeftPiece
-		case bottomRight.x:
-			topCell.kind = TopRightPiece
-			bottomCell.kind = BottomRightPiece
-		}
-		metaCells = append(metaCells, topCell, bottomCell)
-	}
-	for y := topLeft.y + 1; y <= bottomRight.y-1; y++ {
-		topCell := cellMeta{
-			pos:  vector{topLeft.x, y},
-			kind: VerticalPiece,
-		}
-		bottomCell := cellMeta{
-			pos:  vector{bottomRight.x, y},
-			kind: VerticalPiece,
-		}
-		metaCells = append(metaCells, topCell, bottomCell)
-	}
-	return metaCells
+func (r rect) HorizontalCells() int {
+	return r.bottomRight.x - r.topLeft.x + 1
+}
+
+func (r rect) VerticalCells() int {
+	return r.bottomRight.y - r.topLeft.y + 1
+}
+
+func (r rect) IsValid() bool {
+	return r.topLeft.x <= r.bottomRight.x && r.topLeft.y <= r.bottomRight.y
+}
+
+func (r rect) VectorInBounds(v vector) bool {
+	return v.x >= r.topLeft.x &&
+		v.x <= r.bottomRight.x &&
+		v.y >= r.topLeft.y &&
+		v.y <= r.bottomRight.y
 }
