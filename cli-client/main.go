@@ -52,8 +52,6 @@ func main() {
 		shortcut: 'a',
 		text:     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent ultrices sapien aca tortor posuere, semper iaculis lectus volutpat. Nulla facilisi. Donec varius aliquam efficitur. Sed dictum urna tellus, et lacinia erat hendrerit eget. Quisque dolor nunc, hendrerit a pharetra sed, pretium a magna. Mauris dignissim quam elit, non accumsan ipsum laoreet vitae. Nam dapibus venenatis sollicitudin. Ut tempor metus non vestibulum laoreet.",
 	}
-	li.Draw(s)
-
 	li2 := listItem{
 		bounds: rect{
 			topLeft:     vector{0, 15},
@@ -62,7 +60,18 @@ func main() {
 		shortcut: 'b',
 		text:     "stonks!",
 	}
-	li2.Draw(s)
+
+	l := list{
+		bounds: rect{
+			topLeft:     vector{0, 12},
+			bottomRight: vector{46, 16},
+		},
+		items: []*listItem{
+			&li,
+			&li2,
+		},
+	}
+	l.Draw(s)
 
 	s.Show()
 	time.Sleep(time.Second * 5)

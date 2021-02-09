@@ -5,10 +5,10 @@ type vector struct {
 	y int
 }
 
-func (v1 vector) add(v2 vector) vector {
+func (v vector) add(v2 vector) vector {
 	return vector{
-		x: v1.x + v2.x,
-		y: v1.y + v2.y,
+		x: v.x + v2.x,
+		y: v.y + v2.y,
 	}
 }
 
@@ -34,6 +34,10 @@ func (r rect) VectorInBounds(v vector) bool {
 		v.x <= r.bottomRight.x &&
 		v.y >= r.topLeft.y &&
 		v.y <= r.bottomRight.y
+}
+
+func (r rect) RectInBounds(r2 rect) bool {
+	return r.VectorInBounds(r2.topLeft) && r.VectorInBounds(r2.bottomRight)
 }
 
 func (r rect) Transform(v vector) rect {

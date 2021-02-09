@@ -82,6 +82,7 @@ func (b *box) rectCells() []cellMeta {
 type wrappedText struct {
 	bounds rect
 	text   string
+	style  tcell.Style
 }
 
 func (wt *wrappedText) Draw(s *screen) {
@@ -96,7 +97,7 @@ func (wt *wrappedText) Draw(s *screen) {
 		// if there are no new lines available or the word cannot fit on a new line,
 		// replace the last written character with an ellipsis
 		if (needsNewLine && cursor.y+1 > wt.bounds.bottomRight.y) || len(word) > wt.bounds.HorizontalCells() {
-			s.SetContent(cursor.add(vector{-2, 0}), '…', tcell.StyleDefault)
+			s.SetContent(cursor.add(vector{-2, 0}), '…', wt.style)
 			return
 		}
 		// start new line
@@ -106,7 +107,7 @@ func (wt *wrappedText) Draw(s *screen) {
 		}
 		// write text
 		for _, c := range word {
-			s.SetContent(cursor, c, tcell.StyleDefault)
+			s.SetContent(cursor, c, wt.style)
 			cursor = cursor.add(vector{1, 0})
 		}
 		cursor = cursor.add(vector{1, 0})
@@ -119,6 +120,8 @@ type listItem struct {
 	text     string
 }
 
+var shortcutStyle = tcell.Style{}.Foreground(tcell.ColorOrange)
+
 func (li *listItem) Draw(s *screen) {
 	if li.bounds.HorizontalCells() < 7 {
 		panic("must be wider than 7 cells")
@@ -130,7 +133,8 @@ func (li *listItem) Draw(s *screen) {
 			topLeft:     li.bounds.topLeft,
 			bottomRight: li.bounds.topLeft.add(vector{2, 0}),
 		},
-		text: fmt.Sprintf("(%s)", string(li.shortcut)),
+		text:  fmt.Sprintf("(%s)", string(li.shortcut)),
+		style: shortcutStyle,
 	}
 	shortcut.Draw(s)
 
@@ -142,4 +146,22 @@ func (li *listItem) Draw(s *screen) {
 		text: li.text,
 	}
 	description.Draw(s)
+}
+
+type list struct {
+	bounds rect
+	items  []*listItem
+}
+
+func (l *list) Draw(s *screen) {
+	// assert all list items are within the bounds of the list
+	for i, li := range l.items {
+		if !l.bounds.RectInBounds(li.bounds) {
+			panic(fmt.Sprintf("list item %d is out of the screen bounds of the list", i))
+		}
+	}
+
+	for _, li := range l.items {
+		li.Draw(s)
+	}
 }
