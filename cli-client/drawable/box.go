@@ -13,7 +13,7 @@ type Box struct {
 
 var _ Drawable = &Box{}
 
-func (b *Box) Draw(s canvas.Screen) {
+func (b *Box) Draw(s canvas.Screen) KeyCallbacks {
 	if !b.Bounds.IsValid() {
 		panic("invalid Box bounds")
 	}
@@ -36,6 +36,8 @@ func (b *Box) Draw(s canvas.Screen) {
 		s.SetContent(geom.Vector{b.Bounds.TopLeft.X, y}, b.Pieces[VerticalBoxPiece], tcell.StyleDefault)
 		s.SetContent(geom.Vector{b.Bounds.BottomRight.X, y}, b.Pieces[VerticalBoxPiece], tcell.StyleDefault)
 	}
+
+	return nil
 }
 
 type BoxPiece int

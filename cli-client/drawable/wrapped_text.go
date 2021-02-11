@@ -16,7 +16,7 @@ type WrappedText struct {
 
 var _ Drawable = &WrappedText{}
 
-func (wt *WrappedText) Draw(s canvas.Screen) {
+func (wt *WrappedText) Draw(s canvas.Screen) KeyCallbacks {
 	words := strings.Split(wt.Text, " ")
 	cursor := wt.Bounds.TopLeft
 	for _, word := range words {
@@ -29,7 +29,7 @@ func (wt *WrappedText) Draw(s canvas.Screen) {
 		// replace the last written character with an ellipsis
 		if (needsNewLine && cursor.Y+1 > wt.Bounds.BottomRight.Y) || len(word) > wt.Bounds.HorizontalCells() {
 			s.SetContent(cursor.Add(geom.Vector{-2, 0}), '…', wt.Style)
-			return
+			return nil
 		}
 		// start new line
 		if needsNewLine {
@@ -43,4 +43,5 @@ func (wt *WrappedText) Draw(s canvas.Screen) {
 		}
 		cursor = cursor.Add(geom.Vector{1, 0})
 	}
+	return nil
 }

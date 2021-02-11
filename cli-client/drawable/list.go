@@ -14,7 +14,7 @@ type List struct {
 
 var _ Drawable = &List{}
 
-func (l *List) Draw(s canvas.Screen) {
+func (l *List) Draw(s canvas.Screen) KeyCallbacks {
 	// assert all list items are within the bounds of the list
 	for i, li := range l.Items {
 		if !l.Bounds.RectInBounds(li.Bounds) {
@@ -22,7 +22,10 @@ func (l *List) Draw(s canvas.Screen) {
 		}
 	}
 
+	callbacks := NewKeyCallbacks()
 	for _, li := range l.Items {
-		li.Draw(s)
+		callbacks.Push(li.Draw(s))
 	}
+
+	return callbacks
 }

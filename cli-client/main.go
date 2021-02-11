@@ -65,7 +65,7 @@ func main() {
 			&li2,
 		},
 	}
-	l.Draw(s)
+	callbacks := l.Draw(s)
 
 	quit := make(chan struct{})
 	go func() {
@@ -78,6 +78,11 @@ func main() {
 					if ev.Rune() == 'q' {
 						close(quit)
 						return
+					}
+					f := callbacks.CallbackForKey(ev.Rune())
+					if f != nil {
+						f()
+						s.Sync()
 					}
 				}
 			}
