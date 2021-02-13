@@ -21,19 +21,23 @@ func main() {
 	s.Clear()
 
 	box1 := &drawable.Box{
-		Pieces: drawable.DefaultBoxPieces,
+		Child: &drawable.HorizontalSplit{
+			Children: []drawable.Drawable{
+				&drawable.Box{},
+				&drawable.Box{},
+			},
+		},
 	}
-	box2 := &drawable.Box{
-		Pieces: drawable.DefaultBoxPieces,
-	}
-	box3 := &drawable.Box{
-		Pieces: drawable.DefaultBoxPieces,
-	}
+	box2 := &drawable.Box{}
+	box3 := &drawable.Box{}
 	splits := &drawable.VerticalSplit{
 		Children: []drawable.Drawable{box1, box2, box3},
 	}
-	app := &drawable.App{
+	container := &drawable.Box{
 		Child: splits,
+	}
+	app := &drawable.App{
+		Child: container,
 	}
 	callbacks := app.Draw(s)
 

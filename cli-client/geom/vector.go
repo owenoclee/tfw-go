@@ -11,3 +11,13 @@ func (v Vector) Add(v2 Vector) Vector {
 		Y: v.Y + v2.Y,
 	}
 }
+
+func (v Vector) SetX(x int) Vector {
+	v.X = x
+	return v
+}
+
+func (v Vector) SetY(y int) Vector {
+	v.Y = y
+	return v
+}

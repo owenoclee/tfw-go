@@ -26,11 +26,12 @@ func (vs *VerticalSplit) Draw(s canvas.Screen) KeyCallbacks {
 	topLeft := vs.bounds.TopLeft
 	width := splitWidth + splitWidthRemainder
 	for _, c := range vs.Children {
+		bottomLeft := topLeft.SetY(vs.bounds.BottomRight.Y)
 		bounds := geom.Rect{
 			TopLeft: topLeft,
-			BottomRight: topLeft.Add(geom.Vector{
+			BottomRight: bottomLeft.Add(geom.Vector{
 				width - 1,
-				vs.bounds.BottomRight.Y,
+				0,
 			}),
 		}
 		c.SetBounds(bounds)
