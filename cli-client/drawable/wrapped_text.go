@@ -45,3 +45,7 @@ func (wt *WrappedText) Draw(s canvas.Screen) KeyCallbacks {
 	}
 	return nil
 }
+
+func (wt *WrappedText) SetBounds(r geom.Rect) {
+	wt.Bounds = r
+}

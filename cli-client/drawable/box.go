@@ -7,37 +7,51 @@ import (
 )
 
 type Box struct {
-	Bounds geom.Rect
+	bounds geom.Rect
 	Pieces map[BoxPiece]rune
+	Child  Drawable
 }
 
 var _ Drawable = &Box{}
 
 func (b *Box) Draw(s canvas.Screen) KeyCallbacks {
-	if !b.Bounds.IsValid() {
+	if !b.bounds.IsValid() {
 		panic("invalid Box bounds")
 	}
+	pieces := b.Pieces
+	if pieces == nil {
+		pieces = DefaultBoxPieces
+	}
 
-	for x := b.Bounds.TopLeft.X; x <= b.Bounds.BottomRight.X; x++ {
+	for x := b.bounds.TopLeft.X; x <= b.bounds.BottomRight.X; x++ {
 		topCellKind := HorizontalBoxPiece
 		bottomCellKind := HorizontalBoxPiece
 		switch x {
-		case b.Bounds.TopLeft.X:
+		case b.bounds.TopLeft.X:
 			topCellKind = TopLeftBoxPiece
 			bottomCellKind = BottomLeftBoxPiece
-		case b.Bounds.BottomRight.X:
+		case b.bounds.BottomRight.X:
 			topCellKind = TopRightBoxPiece
 			bottomCellKind = BottomRightBoxPiece
 		}
-		s.SetContent(geom.Vector{x, b.Bounds.TopLeft.Y}, b.Pieces[topCellKind], tcell.StyleDefault)
-		s.SetContent(geom.Vector{x, b.Bounds.BottomRight.Y}, b.Pieces[bottomCellKind], tcell.StyleDefault)
+		s.SetContent(geom.Vector{x, b.bounds.TopLeft.Y}, pieces[topCellKind], tcell.StyleDefault)
+		s.SetContent(geom.Vector{x, b.bounds.BottomRight.Y}, pieces[bottomCellKind], tcell.StyleDefault)
 	}
-	for y := b.Bounds.TopLeft.Y + 1; y <= b.Bounds.BottomRight.Y-1; y++ {
-		s.SetContent(geom.Vector{b.Bounds.TopLeft.X, y}, b.Pieces[VerticalBoxPiece], tcell.StyleDefault)
-		s.SetContent(geom.Vector{b.Bounds.BottomRight.X, y}, b.Pieces[VerticalBoxPiece], tcell.StyleDefault)
+	for y := b.bounds.TopLeft.Y + 1; y <= b.bounds.BottomRight.Y-1; y++ {
+		s.SetContent(geom.Vector{b.bounds.TopLeft.X, y}, pieces[VerticalBoxPiece], tcell.StyleDefault)
+		s.SetContent(geom.Vector{b.bounds.BottomRight.X, y}, pieces[VerticalBoxPiece], tcell.StyleDefault)
 	}
 
-	return nil
+	child := b.Child
+	if child == nil {
+		child = &Blank{}
+	}
+	child.SetBounds(b.bounds.Shrink(1))
+	return child.Draw(s)
+}
+
+func (b *Box) SetBounds(r geom.Rect) {
+	b.bounds = r
 }
 
 type BoxPiece int

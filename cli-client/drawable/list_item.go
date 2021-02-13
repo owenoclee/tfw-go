@@ -49,3 +49,7 @@ func (li *ListItem) Draw(s canvas.Screen) KeyCallbacks {
 	})
 	return callbacks
 }
+
+func (li *ListItem) SetBounds(r geom.Rect) {
+	li.Bounds = r
+}
