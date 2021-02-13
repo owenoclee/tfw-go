@@ -13,6 +13,7 @@ func main() {
 	tcell.SetEncodingFallback(tcell.EncodingFallbackASCII)
 	ts, err := tcell.NewScreen()
 	s := tfw.Screen{ts}
+	defer s.Fini()
 	if err != nil {
 		panic(err)
 	}
@@ -48,7 +49,18 @@ func main() {
 			RowLines: 2,
 		},
 	}
-	box3 := &component.Box{}
+	box3 := &component.Box{
+		Child: &layout.Rows{
+			Children: []tfw.Drawable{
+				&component.ShortcutOption{
+					Shortcut: 'a',
+					Text:     "press me!",
+					Callback: func() { println("ah yes") },
+				},
+			},
+			RowLines: 2,
+		},
+	}
 	splits := &layout.VerticalSplit{
 		Children: []tfw.Drawable{box1, box2, box3},
 	}
@@ -89,7 +101,6 @@ func main() {
 	for {
 		select {
 		case <-quit:
-			s.Fini()
 			return
 		case <-time.After(time.Millisecond * 50):
 			app.Draw(s)
