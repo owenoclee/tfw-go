@@ -3,18 +3,18 @@ package drawable
 import (
 	"fmt"
 
-	"github.com/owenoclee/tfw-go/cli-client/canvas"
-	"github.com/owenoclee/tfw-go/cli-client/geom"
+	"github.com/owenoclee/tfw-go/cli-client/tfw"
+	"github.com/owenoclee/tfw-go/cli-client/tfw/geo"
 )
 
 type List struct {
-	Bounds geom.Rect
+	Bounds geo.Rect
 	Items  []*ListItem
 }
 
 var _ Drawable = &List{}
 
-func (l *List) Draw(s canvas.Screen) KeyCallbacks {
+func (l *List) Draw(s tfw.Screen) KeyCallbacks {
 	// assert all list items are within the bounds of the list
 	for i, li := range l.Items {
 		if !l.Bounds.RectInBounds(li.Bounds) {
@@ -30,6 +30,6 @@ func (l *List) Draw(s canvas.Screen) KeyCallbacks {
 	return callbacks
 }
 
-func (l *List) SetBounds(r geom.Rect) {
+func (l *List) SetBounds(r geo.Rect) {
 	l.Bounds = r
 }

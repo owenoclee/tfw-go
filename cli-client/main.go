@@ -4,14 +4,14 @@ import (
 	"time"
 
 	"github.com/gdamore/tcell/v2"
-	"github.com/owenoclee/tfw-go/cli-client/canvas"
-	"github.com/owenoclee/tfw-go/cli-client/drawable"
+	"github.com/owenoclee/tfw-go/cli-client/tfw"
+	"github.com/owenoclee/tfw-go/cli-client/tfw/drawable"
 )
 
 func main() {
 	tcell.SetEncodingFallback(tcell.EncodingFallbackASCII)
 	ts, err := tcell.NewScreen()
-	s := canvas.Screen{ts}
+	s := tfw.Screen{ts}
 	if err != nil {
 		panic(err)
 	}

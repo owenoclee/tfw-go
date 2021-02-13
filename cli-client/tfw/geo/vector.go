@@ -1,4 +1,4 @@
-package geom
+package geo
 
 type Vector struct {
 	X int

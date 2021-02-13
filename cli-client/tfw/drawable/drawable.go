@@ -1,8 +1,8 @@
 package drawable
 
 import (
-	"github.com/owenoclee/tfw-go/cli-client/canvas"
-	"github.com/owenoclee/tfw-go/cli-client/geom"
+	"github.com/owenoclee/tfw-go/cli-client/tfw"
+	"github.com/owenoclee/tfw-go/cli-client/tfw/geo"
 )
 
 type KeyCallbacks map[rune]func()
@@ -26,6 +26,6 @@ func (kc KeyCallbacks) CallbackForKey(key rune) func() {
 }
 
 type Drawable interface {
-	Draw(canvas.Screen) KeyCallbacks
-	SetBounds(geom.Rect)
+	Draw(tfw.Screen) KeyCallbacks
+	SetBounds(geo.Rect)
 }

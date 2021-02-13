@@ -2,19 +2,19 @@ package drawable
 
 import (
 	"github.com/gdamore/tcell/v2"
-	"github.com/owenoclee/tfw-go/cli-client/canvas"
-	"github.com/owenoclee/tfw-go/cli-client/geom"
+	"github.com/owenoclee/tfw-go/cli-client/tfw"
+	"github.com/owenoclee/tfw-go/cli-client/tfw/geo"
 )
 
 type Box struct {
-	bounds geom.Rect
+	bounds geo.Rect
 	Pieces map[BoxPiece]rune
 	Child  Drawable
 }
 
 var _ Drawable = &Box{}
 
-func (b *Box) Draw(s canvas.Screen) KeyCallbacks {
+func (b *Box) Draw(s tfw.Screen) KeyCallbacks {
 	if !b.bounds.IsValid() {
 		panic("invalid Box bounds")
 	}
@@ -34,12 +34,12 @@ func (b *Box) Draw(s canvas.Screen) KeyCallbacks {
 			topCellKind = TopRightBoxPiece
 			bottomCellKind = BottomRightBoxPiece
 		}
-		s.SetContent(geom.Vector{x, b.bounds.TopLeft.Y}, pieces[topCellKind], tcell.StyleDefault)
-		s.SetContent(geom.Vector{x, b.bounds.BottomRight.Y}, pieces[bottomCellKind], tcell.StyleDefault)
+		s.SetContent(geo.Vector{x, b.bounds.TopLeft.Y}, pieces[topCellKind], tcell.StyleDefault)
+		s.SetContent(geo.Vector{x, b.bounds.BottomRight.Y}, pieces[bottomCellKind], tcell.StyleDefault)
 	}
 	for y := b.bounds.TopLeft.Y + 1; y <= b.bounds.BottomRight.Y-1; y++ {
-		s.SetContent(geom.Vector{b.bounds.TopLeft.X, y}, pieces[VerticalBoxPiece], tcell.StyleDefault)
-		s.SetContent(geom.Vector{b.bounds.BottomRight.X, y}, pieces[VerticalBoxPiece], tcell.StyleDefault)
+		s.SetContent(geo.Vector{b.bounds.TopLeft.X, y}, pieces[VerticalBoxPiece], tcell.StyleDefault)
+		s.SetContent(geo.Vector{b.bounds.BottomRight.X, y}, pieces[VerticalBoxPiece], tcell.StyleDefault)
 	}
 
 	child := b.Child
@@ -50,7 +50,7 @@ func (b *Box) Draw(s canvas.Screen) KeyCallbacks {
 	return child.Draw(s)
 }
 
-func (b *Box) SetBounds(r geom.Rect) {
+func (b *Box) SetBounds(r geo.Rect) {
 	b.bounds = r
 }
 

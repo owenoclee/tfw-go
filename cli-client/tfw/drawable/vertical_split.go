@@ -1,16 +1,16 @@
 package drawable
 
 import (
-	"github.com/owenoclee/tfw-go/cli-client/canvas"
-	"github.com/owenoclee/tfw-go/cli-client/geom"
+	"github.com/owenoclee/tfw-go/cli-client/tfw"
+	"github.com/owenoclee/tfw-go/cli-client/tfw/geo"
 )
 
 type VerticalSplit struct {
-	bounds   geom.Rect
+	bounds   geo.Rect
 	Children []Drawable
 }
 
-func (vs *VerticalSplit) Draw(s canvas.Screen) KeyCallbacks {
+func (vs *VerticalSplit) Draw(s tfw.Screen) KeyCallbacks {
 	n := len(vs.Children)
 	if n == 0 {
 		child := Blank{}
@@ -27,9 +27,9 @@ func (vs *VerticalSplit) Draw(s canvas.Screen) KeyCallbacks {
 	width := splitWidth + splitWidthRemainder
 	for _, c := range vs.Children {
 		bottomLeft := topLeft.SetY(vs.bounds.BottomRight.Y)
-		bounds := geom.Rect{
+		bounds := geo.Rect{
 			TopLeft: topLeft,
-			BottomRight: bottomLeft.Add(geom.Vector{
+			BottomRight: bottomLeft.Add(geo.Vector{
 				width - 1,
 				0,
 			}),
@@ -37,12 +37,12 @@ func (vs *VerticalSplit) Draw(s canvas.Screen) KeyCallbacks {
 		c.SetBounds(bounds)
 		callbacks.Push(c.Draw(s))
 
-		topLeft = topLeft.Add(geom.Vector{width, 0})
+		topLeft = topLeft.Add(geo.Vector{width, 0})
 		width = splitWidth
 	}
 	return callbacks
 }
 
-func (vs *VerticalSplit) SetBounds(r geom.Rect) {
+func (vs *VerticalSplit) SetBounds(r geo.Rect) {
 	vs.bounds = r
 }

@@ -1,16 +1,16 @@
 package drawable
 
 import (
-	"github.com/owenoclee/tfw-go/cli-client/canvas"
-	"github.com/owenoclee/tfw-go/cli-client/geom"
+	"github.com/owenoclee/tfw-go/cli-client/tfw"
+	"github.com/owenoclee/tfw-go/cli-client/tfw/geo"
 )
 
 type HorizontalSplit struct {
-	bounds   geom.Rect
+	bounds   geo.Rect
 	Children []Drawable
 }
 
-func (hs *HorizontalSplit) Draw(s canvas.Screen) KeyCallbacks {
+func (hs *HorizontalSplit) Draw(s tfw.Screen) KeyCallbacks {
 	n := len(hs.Children)
 	if n == 0 {
 		child := Blank{}
@@ -27,9 +27,9 @@ func (hs *HorizontalSplit) Draw(s canvas.Screen) KeyCallbacks {
 	height := splitHeight + splitHeightRemainder
 	for _, c := range hs.Children {
 		topRight := topLeft.SetX(hs.bounds.BottomRight.X)
-		bounds := geom.Rect{
+		bounds := geo.Rect{
 			TopLeft: topLeft,
-			BottomRight: topRight.Add(geom.Vector{
+			BottomRight: topRight.Add(geo.Vector{
 				0,
 				height - 1,
 			}),
@@ -37,12 +37,12 @@ func (hs *HorizontalSplit) Draw(s canvas.Screen) KeyCallbacks {
 		c.SetBounds(bounds)
 		callbacks.Push(c.Draw(s))
 
-		topLeft = topLeft.Add(geom.Vector{0, height})
+		topLeft = topLeft.Add(geo.Vector{0, height})
 		height = splitHeight
 	}
 	return callbacks
 }
 
-func (hs *HorizontalSplit) SetBounds(r geom.Rect) {
+func (hs *HorizontalSplit) SetBounds(r geo.Rect) {
 	hs.bounds = r
 }

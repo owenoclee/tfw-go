@@ -1,4 +1,4 @@
-package geom
+package geo
 
 type Rect struct {
 	TopLeft     Vector
