@@ -1,4 +1,4 @@
-package drawable
+package component
 
 import (
 	"fmt"
@@ -12,9 +12,9 @@ type List struct {
 	Items  []*ListItem
 }
 
-var _ Drawable = &List{}
+var _ tfw.Drawable = &List{}
 
-func (l *List) Draw(s tfw.Screen) KeyCallbacks {
+func (l *List) Draw(s tfw.Screen) tfw.KeyCallbacks {
 	// assert all list items are within the bounds of the list
 	for i, li := range l.Items {
 		if !l.Bounds.RectInBounds(li.Bounds) {
@@ -22,7 +22,7 @@ func (l *List) Draw(s tfw.Screen) KeyCallbacks {
 		}
 	}
 
-	callbacks := NewKeyCallbacks()
+	callbacks := tfw.NewKeyCallbacks()
 	for _, li := range l.Items {
 		callbacks.Push(li.Draw(s))
 	}

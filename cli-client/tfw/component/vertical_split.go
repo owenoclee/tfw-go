@@ -1,4 +1,4 @@
-package drawable
+package component
 
 import (
 	"github.com/owenoclee/tfw-go/cli-client/tfw"
@@ -7,10 +7,10 @@ import (
 
 type VerticalSplit struct {
 	bounds   geo.Rect
-	Children []Drawable
+	Children []tfw.Drawable
 }
 
-func (vs *VerticalSplit) Draw(s tfw.Screen) KeyCallbacks {
+func (vs *VerticalSplit) Draw(s tfw.Screen) tfw.KeyCallbacks {
 	n := len(vs.Children)
 	if n == 0 {
 		child := Blank{}
@@ -22,7 +22,7 @@ func (vs *VerticalSplit) Draw(s tfw.Screen) KeyCallbacks {
 	splitWidth := fullWidth / n
 	splitWidthRemainder := fullWidth % n
 
-	callbacks := NewKeyCallbacks()
+	callbacks := tfw.NewKeyCallbacks()
 	topLeft := vs.bounds.TopLeft
 	width := splitWidth + splitWidthRemainder
 	for _, c := range vs.Children {

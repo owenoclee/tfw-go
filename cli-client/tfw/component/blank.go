@@ -1,4 +1,4 @@
-package drawable
+package component
 
 import (
 	"github.com/gdamore/tcell/v2"
@@ -10,9 +10,9 @@ type Blank struct {
 	bounds geo.Rect
 }
 
-var _ Drawable = &Blank{}
+var _ tfw.Drawable = &Blank{}
 
-func (b *Blank) Draw(s tfw.Screen) KeyCallbacks {
+func (b *Blank) Draw(s tfw.Screen) tfw.KeyCallbacks {
 	for _, cell := range b.bounds.CellLocations() {
 		s.SetContent(cell, ' ', tcell.StyleDefault)
 	}

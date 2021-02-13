@@ -1,4 +1,4 @@
-package drawable
+package component
 
 import (
 	"fmt"
@@ -17,9 +17,9 @@ type ListItem struct {
 	Text     string
 }
 
-var _ Drawable = &ListItem{}
+var _ tfw.Drawable = &ListItem{}
 
-func (li *ListItem) Draw(s tfw.Screen) KeyCallbacks {
+func (li *ListItem) Draw(s tfw.Screen) tfw.KeyCallbacks {
 	if li.Bounds.HorizontalCells() < 7 {
 		panic("list item must be at least 7 cells wide")
 	}
@@ -43,7 +43,7 @@ func (li *ListItem) Draw(s tfw.Screen) KeyCallbacks {
 	}
 	description.Draw(s)
 
-	callbacks := NewKeyCallbacks()
+	callbacks := tfw.NewKeyCallbacks()
 	callbacks.Register(li.Shortcut, func() {
 		s.SetContent(geo.Vector{48 + rand.Intn(20), 0}, 'A', tcell.StyleDefault)
 	})

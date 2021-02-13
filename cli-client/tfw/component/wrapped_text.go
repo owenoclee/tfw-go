@@ -1,4 +1,4 @@
-package drawable
+package component
 
 import (
 	"strings"
@@ -14,9 +14,9 @@ type WrappedText struct {
 	Style  tcell.Style
 }
 
-var _ Drawable = &WrappedText{}
+var _ tfw.Drawable = &WrappedText{}
 
-func (wt *WrappedText) Draw(s tfw.Screen) KeyCallbacks {
+func (wt *WrappedText) Draw(s tfw.Screen) tfw.KeyCallbacks {
 	words := strings.Split(wt.Text, " ")
 	cursor := wt.Bounds.TopLeft
 	for _, word := range words {

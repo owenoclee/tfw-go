@@ -1,4 +1,4 @@
-package drawable
+package component
 
 import (
 	"github.com/gdamore/tcell/v2"
@@ -9,12 +9,12 @@ import (
 type Box struct {
 	bounds geo.Rect
 	Pieces map[BoxPiece]rune
-	Child  Drawable
+	Child  tfw.Drawable
 }
 
-var _ Drawable = &Box{}
+var _ tfw.Drawable = &Box{}
 
-func (b *Box) Draw(s tfw.Screen) KeyCallbacks {
+func (b *Box) Draw(s tfw.Screen) tfw.KeyCallbacks {
 	if !b.bounds.IsValid() {
 		panic("invalid Box bounds")
 	}
