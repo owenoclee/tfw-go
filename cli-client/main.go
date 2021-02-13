@@ -29,7 +29,25 @@ func main() {
 			},
 		},
 	}
-	box2 := &component.Box{}
+	box2 := &component.Box{
+		Child: &layout.Rows{
+			Children: []tfw.Drawable{
+				&component.WrappedText{
+					Text: "stonks!",
+				},
+				&component.WrappedText{
+					Text: "The quick brown fox jumps over the lazy dog.",
+				},
+				&component.Box{},
+				&component.Box{},
+				&component.Box{},
+				&component.Box{},
+				&component.Box{},
+				&component.Box{},
+			},
+			RowLines: 2,
+		},
+	}
 	box3 := &component.Box{}
 	splits := &layout.VerticalSplit{
 		Children: []tfw.Drawable{box1, box2, box3},

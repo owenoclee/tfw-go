@@ -16,3 +16,10 @@ type Screen struct {
 func (s *Screen) SetContent(pos geo.Vector, c rune, style tcell.Style) {
 	s.Screen.SetContent(pos.X, pos.Y, c, nil, style)
 }
+
+// ClearRegion sets all cells within a given geo.Rect to blank.
+func (s *Screen) ClearRegion(r geo.Rect) {
+	for _, cell := range r.CellLocations() {
+		s.SetContent(cell, ' ', tcell.StyleDefault)
+	}
+}

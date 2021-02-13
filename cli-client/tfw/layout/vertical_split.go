@@ -17,12 +17,12 @@ func (vs *VerticalSplit) Draw(s tfw.Screen) tfw.KeyCallbacks {
 	splitWidthRemainder := fullWidth % n
 
 	callbacks := tfw.NewKeyCallbacks()
-	topLeft := vs.bounds.TopLeft
+	topLeftCursor := vs.bounds.TopLeft
 	width := splitWidth + splitWidthRemainder
 	for _, c := range vs.Children {
-		bottomLeft := topLeft.SetY(vs.bounds.BottomRight.Y)
+		bottomLeft := topLeftCursor.SetY(vs.bounds.BottomRight.Y)
 		bounds := geo.Rect{
-			TopLeft: topLeft,
+			TopLeft: topLeftCursor,
 			BottomRight: bottomLeft.Add(geo.Vector{
 				width - 1,
 				0,
@@ -31,7 +31,7 @@ func (vs *VerticalSplit) Draw(s tfw.Screen) tfw.KeyCallbacks {
 		c.SetBounds(bounds)
 		callbacks.Push(c.Draw(s))
 
-		topLeft = topLeft.Add(geo.Vector{width, 0})
+		topLeftCursor = topLeftCursor.Add(geo.Vector{width, 0})
 		width = splitWidth
 	}
 	return callbacks
