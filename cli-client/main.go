@@ -6,6 +6,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/owenoclee/tfw-go/cli-client/tfw"
 	"github.com/owenoclee/tfw-go/cli-client/tfw/component"
+	"github.com/owenoclee/tfw-go/cli-client/tfw/layout"
 )
 
 func main() {
@@ -21,7 +22,7 @@ func main() {
 	s.Clear()
 
 	box1 := &component.Box{
-		Child: &component.HorizontalSplit{
+		Child: &layout.HorizontalSplit{
 			Children: []tfw.Drawable{
 				&component.Box{},
 				&component.Box{},
@@ -30,7 +31,7 @@ func main() {
 	}
 	box2 := &component.Box{}
 	box3 := &component.Box{}
-	splits := &component.VerticalSplit{
+	splits := &layout.VerticalSplit{
 		Children: []tfw.Drawable{box1, box2, box3},
 	}
 	container := &component.Box{

@@ -1,4 +1,4 @@
-package component
+package layout
 
 import (
 	"github.com/owenoclee/tfw-go/cli-client/tfw"
@@ -12,12 +12,6 @@ type VerticalSplit struct {
 
 func (vs *VerticalSplit) Draw(s tfw.Screen) tfw.KeyCallbacks {
 	n := len(vs.Children)
-	if n == 0 {
-		child := Blank{}
-		child.SetBounds(vs.bounds)
-		return child.Draw(s)
-	}
-
 	fullWidth := vs.bounds.HorizontalCells()
 	splitWidth := fullWidth / n
 	splitWidthRemainder := fullWidth % n
