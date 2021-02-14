@@ -82,7 +82,28 @@ func main() {
 		Child: splits,
 	}
 	app := &tfw.App{
-		Child: container,
+		Child: &layout.WithToolbar{
+			Primary: container,
+			BarElements: []tfw.MinBoundableDrawable{
+				&component.ShortcutOption{
+					Shortcut: 'q',
+					Text:     "quit",
+				},
+				&component.ShortcutOption{
+					Shortcut: 'b',
+					Text:     "buy stonks",
+				},
+				&component.ShortcutOption{
+					Shortcut: 's',
+					Text:     "sell stonks",
+				},
+				&component.ShortcutOption{
+					Shortcut: 'y',
+					Text:     "ah yes",
+				},
+			},
+			ElementGap: 1,
+		},
 	}
 	callbacks := app.Draw(s)
 

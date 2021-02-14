@@ -47,3 +47,10 @@ func (so *ShortcutOption) Draw(s tfw.Screen) tfw.KeyCallbacks {
 func (so *ShortcutOption) SetBounds(r geo.Rect) {
 	so.bounds = r
 }
+
+func (so *ShortcutOption) MinBounds(topLeft geo.Vector) geo.Rect {
+	return geo.Rect{
+		TopLeft:     topLeft,
+		BottomRight: topLeft.Add(geo.Vector{3 + len(so.Text), 0}),
+	}
+}
