@@ -23,6 +23,8 @@ func (b *Box) Draw(s tfw.Screen) tfw.KeyCallbacks {
 		pieces = DefaultBoxPieces
 	}
 
+	s.ClearRegion(b.bounds)
+
 	for x := b.bounds.TopLeft.X; x <= b.bounds.BottomRight.X; x++ {
 		topCellKind := HorizontalBoxPiece
 		bottomCellKind := HorizontalBoxPiece
@@ -42,12 +44,11 @@ func (b *Box) Draw(s tfw.Screen) tfw.KeyCallbacks {
 		s.SetContent(geo.Vector{b.bounds.BottomRight.X, y}, pieces[VerticalBoxPiece], tcell.StyleDefault)
 	}
 
-	child := b.Child
-	if child == nil {
-		child = &Blank{}
+	if b.Child == nil {
+		return nil
 	}
-	child.SetBounds(b.bounds.Shrink(1))
-	return child.Draw(s)
+	b.Child.SetBounds(b.bounds.Shrink(1))
+	return b.Child.Draw(s)
 }
 
 func (b *Box) SetBounds(r geo.Rect) {
