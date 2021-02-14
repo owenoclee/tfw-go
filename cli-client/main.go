@@ -57,6 +57,20 @@ func main() {
 					Text:     "press me!",
 					Callback: func() { println("ah yes") },
 				},
+				&layout.Columns{
+					Children: []tfw.Drawable{
+						&component.WrappedText{
+							Text: "sweet!",
+						},
+						&component.WrappedText{
+							Text: "cool!",
+						},
+						&component.WrappedText{
+							Text: "nice!",
+						},
+					},
+					ColumnCells: 7,
+				},
 			},
 			RowLines: 2,
 		},
