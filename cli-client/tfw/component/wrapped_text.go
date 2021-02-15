@@ -22,6 +22,8 @@ func (wt *WrappedText) Draw(s tfw.Screen) tfw.KeyCallbacks {
 		style = *wt.Style
 	}
 
+	s.SetRegion(wt.Bounds, ' ', style)
+
 	words := strings.Split(wt.Text, " ")
 	cursor := wt.Bounds.TopLeft
 	for _, word := range words {
