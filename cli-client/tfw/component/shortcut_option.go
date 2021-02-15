@@ -8,25 +8,34 @@ import (
 	"github.com/owenoclee/tfw-go/cli-client/tfw/geo"
 )
 
-var shortcutStyle = tcell.Style{}.Foreground(tcell.ColorOrange)
-
 type ShortcutOption struct {
-	bounds   geo.Rect
-	Shortcut rune
-	Text     string
-	Callback func()
+	bounds        geo.Rect
+	Shortcut      rune
+	Text          string
+	Callback      func()
+	ShortcutStyle *tcell.Style
+	TextStyle     *tcell.Style
 }
 
 var _ tfw.Drawable = &ShortcutOption{}
 
 func (so *ShortcutOption) Draw(s tfw.Screen) tfw.KeyCallbacks {
+	shortcutStyle := tcell.Style{}.Foreground(tcell.ColorOrange)
+	if so.ShortcutStyle != nil {
+		shortcutStyle = *so.ShortcutStyle
+	}
+	textStyle := tcell.StyleDefault
+	if so.TextStyle != nil {
+		textStyle = *so.TextStyle
+	}
+
 	shortcutText := WrappedText{
 		Bounds: geo.Rect{
 			TopLeft:     so.bounds.TopLeft,
 			BottomRight: so.bounds.TopLeft.Add(geo.Vector{2, 0}),
 		},
 		Text:  fmt.Sprintf("(%s)", string(so.Shortcut)),
-		Style: shortcutStyle,
+		Style: &shortcutStyle,
 	}
 	shortcutText.Draw(s)
 
@@ -35,7 +44,8 @@ func (so *ShortcutOption) Draw(s tfw.Screen) tfw.KeyCallbacks {
 			TopLeft:     so.bounds.TopLeft.Add(geo.Vector{4, 0}),
 			BottomRight: so.bounds.BottomRight,
 		},
-		Text: so.Text,
+		Text:  so.Text,
+		Style: &textStyle,
 	}
 	description.Draw(s)
 
