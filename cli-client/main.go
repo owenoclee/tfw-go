@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/gdamore/tcell/v2"
@@ -8,6 +9,9 @@ import (
 	"github.com/owenoclee/tfw-go/cli-client/tfw/component"
 	"github.com/owenoclee/tfw-go/cli-client/tfw/layout"
 )
+
+var loremIpsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer eget nibh et risus porta semper id id diam. Nam blandit, arcu at eleifend facilisis, augue nunc pulvinar nisl, a finibus sapien orci quis mi. Donec malesuada, tellus vitae finibus ornare, nunc nibh consectetur risus, sed porttitor risus nisl a libero. Nullam odio lectus, pellentesque sed ipsum a, convallis sodales odio. Nam justo sapien, posuere eget felis at, accumsan varius augue. Integer pulvinar tempor consequat. Praesent in maximus massa. Fusce posuere sit amet ligula eu condimentum. Nullam porta augue maximus lectus euismod, porttitor placerat risus facilisis. Nunc interdum neque metus, quis suscipit dui pretium vitae."
+var number = 0
 
 func main() {
 	tcell.SetEncodingFallback(tcell.EncodingFallbackASCII)
@@ -22,92 +26,92 @@ func main() {
 	}
 	s.Clear()
 
-	box1 := &component.Box{
-		Child: &layout.HorizontalSplit{
-			Children: []tfw.Drawable{
-				&component.Box{},
-				&component.Box{},
+	exampleStyle := tcell.Style{}.Foreground(tcell.ColorBlue)
+	exampleStyle2 := tcell.Style{}.Foreground(tcell.ColorOrange)
+	leftBoxes := &layout.HorizontalSplit{
+		Children: []tfw.Drawable{
+			&component.Box{
+				Child: &component.WrappedText{
+					Text:  loremIpsum,
+					Style: &exampleStyle,
+				},
+			},
+			&component.Box{
+				Child: &component.WrappedText{
+					Text:  loremIpsum,
+					Style: &exampleStyle2,
+				},
 			},
 		},
 	}
-	box2 := &component.Box{
-		Child: &layout.Rows{
-			Children: []tfw.Drawable{
-				&component.WrappedText{
-					Text: "stonks!",
-				},
-				&component.WrappedText{
-					Text: "The quick brown fox jumps over the lazy dog.",
-				},
-				&component.Box{},
-				&component.Box{},
-				&component.Box{},
-				&component.Box{},
-				&component.Box{},
-				&component.Box{},
-			},
-			RowLines: 2,
-		},
+
+	numberDisplay := &component.WrappedText{
+		Text: fmt.Sprint(number),
 	}
-	box3 := &component.Box{
-		Child: &layout.Rows{
+	middleBox := &component.Box{
+		Child: &layout.Margin{Child: &layout.Rows{
 			Children: []tfw.Drawable{
+				numberDisplay,
 				&component.ShortcutOption{
-					Shortcut: 'a',
-					Text:     "press me!",
-					Callback: func() { println("ah yes") },
+					Shortcut: 'k',
+					Text:     "Increase number",
+					Callback: func() { number++; numberDisplay.SetText(fmt.Sprint(number)) },
 				},
-				&layout.Columns{
-					Children: []tfw.Drawable{
-						&component.WrappedText{
-							Text: "sweet!",
-						},
-						&component.WrappedText{
-							Text: "cool!",
-						},
-						&component.WrappedText{
-							Text: "nice!",
-						},
-					},
-					ColumnCells: 7,
+				&component.ShortcutOption{
+					Shortcut: 'j',
+					Text:     "Decrease number",
+					Callback: func() { number--; numberDisplay.SetText(fmt.Sprint(number)) },
 				},
 			},
 			RowLines: 2,
 		},
+			Top:    1,
+			Bottom: 1,
+			Left:   2,
+			Right:  2,
+		},
 	}
-	splits := &layout.VerticalSplit{
-		Children: []tfw.Drawable{box1, box2, box3},
+
+	rightBox := &component.Box{
+		Child: &layout.Columns{
+			Children: []tfw.Drawable{
+				&component.WrappedText{
+					Text: "column 1",
+				},
+				&component.WrappedText{
+					Text: "column 2",
+				},
+				&component.WrappedText{
+					Text: "column 3",
+				},
+			},
+			ColumnCells: 12,
+		},
 	}
-	container := &component.Box{
-		Child: splits,
-	}
+
 	app := &tfw.App{
 		Child: &layout.WithToolbar{
-			Primary: container,
+			Primary: &component.Box{
+				Child: &layout.VerticalSplit{
+					Children: []tfw.Drawable{
+						leftBoxes,
+						middleBox,
+						rightBox,
+					},
+				},
+			},
 			BarElements: []tfw.MinBoundableDrawable{
 				&component.ShortcutOption{
 					Shortcut: 'q',
 					Text:     "quit",
 				},
-				&component.ShortcutOption{
-					Shortcut: 'b',
-					Text:     "buy stonks",
-				},
-				&component.ShortcutOption{
-					Shortcut: 's',
-					Text:     "sell stonks",
-				},
-				&component.ShortcutOption{
-					Shortcut: 'y',
-					Text:     "ah yes",
-				},
 			},
 			ElementGap: 1,
 		},
 	}
-	callbacks := app.Draw(s)
 
-	hasResized := false
+	var callbacks tfw.KeyCallbacks
+	var needsRedraw bool
 	quit := make(chan struct{})
 	go func() {
 		for {
@@ -123,11 +127,11 @@ func main() {
 					f := callbacks.CallbackForKey(ev.Rune())
 					if f != nil {
 						f()
-						s.Sync()
+						needsRedraw = true
 					}
 				}
 			case *tcell.EventResize:
-				hasResized = true
+				needsRedraw = true
 			}
 		}
 	}()
@@ -138,10 +142,10 @@ func main() {
 		case <-quit:
 			return
 		case <-time.After(time.Millisecond * 50):
-			app.Draw(s)
-			if hasResized == true {
+			if needsRedraw == true {
+				callbacks = app.Draw(s)
 				s.Sync()
-				hasResized = false
+				needsRedraw = false
 			}
 		}
 	}
