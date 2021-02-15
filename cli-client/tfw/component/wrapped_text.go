@@ -56,3 +56,7 @@ func (wt *WrappedText) Draw(s tfw.Screen) tfw.KeyCallbacks {
 func (wt *WrappedText) SetBounds(r geo.Rect) {
 	wt.Bounds = r
 }
+
+func (wt *WrappedText) SetText(text string) {
+	wt.Text = text
+}
