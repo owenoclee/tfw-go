@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/owenoclee/tfw-go"
@@ -14,18 +13,6 @@ var loremIpsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integ
 var number = 0
 
 func main() {
-	tcell.SetEncodingFallback(tcell.EncodingFallbackASCII)
-	ts, err := tcell.NewScreen()
-	s := tfw.Screen{ts}
-	defer s.Fini()
-	if err != nil {
-		panic(err)
-	}
-	if err := s.Init(); err != nil {
-		panic(err)
-	}
-	s.Clear()
-
 	exampleStyle := tcell.Style{}.Foreground(tcell.ColorBlue)
 	exampleStyle2 := tcell.Style{}.Foreground(tcell.ColorOrange)
 	leftBoxes := &layout.HorizontalSplit{
@@ -90,6 +77,7 @@ func main() {
 		},
 	}
 
+	quit := make(chan struct{})
 	app := &tfw.App{
 		Child: &layout.WithToolbar{
 			Primary: &component.Box{
@@ -105,49 +93,12 @@ func main() {
 				&component.ShortcutOption{
 					Shortcut: 'q',
 					Text:     "quit",
+					Callback: func() { close(quit) },
 				},
 			},
 			ElementGap: 1,
 		},
+		Quit: quit,
 	}
-
-	var callbacks tfw.KeyCallbacks
-	var needsRedraw bool
-	quit := make(chan struct{})
-	go func() {
-		for {
-			ev := s.PollEvent()
-			switch ev := ev.(type) {
-			case *tcell.EventKey:
-				switch ev.Key() {
-				case tcell.KeyRune:
-					if ev.Rune() == 'q' {
-						close(quit)
-						return
-					}
-					f := callbacks.CallbackForKey(ev.Rune())
-					if f != nil {
-						f()
-						needsRedraw = true
-					}
-				}
-			case *tcell.EventResize:
-				needsRedraw = true
-			}
-		}
-	}()
-
-	s.Show()
-	for {
-		select {
-		case <-quit:
-			return
-		case <-time.After(time.Millisecond * 50):
-			if needsRedraw == true {
-				callbacks = app.Draw(s)
-				s.Sync()
-				needsRedraw = false
-			}
-		}
-	}
+	app.Run()
 }
