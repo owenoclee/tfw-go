@@ -49,22 +49,23 @@ func main() {
 		Text: fmt.Sprint(number),
 	}
 	middleBox := &component.Box{
-		Child: &layout.Margin{Child: &layout.Rows{
-			Children: []tfw.Drawable{
-				numberDisplay,
-				&component.ShortcutOption{
-					Shortcut: 'k',
-					Text:     "Increase number",
-					Callback: func() { number++; numberDisplay.SetText(fmt.Sprint(number)) },
+		Child: &layout.Margin{
+			Child: &layout.Rows{
+				Children: []tfw.Drawable{
+					numberDisplay,
+					&component.ShortcutOption{
+						Shortcut: 'k',
+						Text:     "Increase number",
+						Callback: func() { number++; numberDisplay.SetText(fmt.Sprint(number)) },
+					},
+					&component.ShortcutOption{
+						Shortcut: 'j',
+						Text:     "Decrease number",
+						Callback: func() { number--; numberDisplay.SetText(fmt.Sprint(number)) },
+					},
 				},
-				&component.ShortcutOption{
-					Shortcut: 'j',
-					Text:     "Decrease number",
-					Callback: func() { number--; numberDisplay.SetText(fmt.Sprint(number)) },
-				},
+				RowLines: 2,
 			},
-			RowLines: 2,
-		},
 			Top:    1,
 			Bottom: 1,
 			Left:   2,
