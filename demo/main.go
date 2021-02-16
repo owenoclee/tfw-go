@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"github.com/gdamore/tcell/v2"
-	"github.com/owenoclee/tfw-go/cli-client/tfw"
-	"github.com/owenoclee/tfw-go/cli-client/tfw/component"
-	"github.com/owenoclee/tfw-go/cli-client/tfw/layout"
+	"github.com/owenoclee/tfw-go"
+	"github.com/owenoclee/tfw-go/component"
+	"github.com/owenoclee/tfw-go/layout"
 )
 
 var loremIpsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer eget nibh et risus porta semper id id diam. Nam blandit, arcu at eleifend facilisis, augue nunc pulvinar nisl, a finibus sapien orci quis mi. Donec malesuada, tellus vitae finibus ornare, nunc nibh consectetur risus, sed porttitor risus nisl a libero. Nullam odio lectus, pellentesque sed ipsum a, convallis sodales odio. Nam justo sapien, posuere eget felis at, accumsan varius augue. Integer pulvinar tempor consequat. Praesent in maximus massa. Fusce posuere sit amet ligula eu condimentum. Nullam porta augue maximus lectus euismod, porttitor placerat risus facilisis. Nunc interdum neque metus, quis suscipit dui pretium vitae."

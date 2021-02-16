@@ -1,6 +1,6 @@
 package tfw
 
-import "github.com/owenoclee/tfw-go/cli-client/tfw/geo"
+import "github.com/owenoclee/tfw-go/geo"
 
 type App struct {
 	Child Drawable

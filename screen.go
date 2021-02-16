@@ -2,7 +2,7 @@ package tfw
 
 import (
 	"github.com/gdamore/tcell/v2"
-	"github.com/owenoclee/tfw-go/cli-client/tfw/geo"
+	"github.com/owenoclee/tfw-go/geo"
 )
 
 // Screen is a wrapper around tcell.Screen to provide some convenience methods.

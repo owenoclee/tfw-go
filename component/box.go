@@ -2,8 +2,8 @@ package component
 
 import (
 	"github.com/gdamore/tcell/v2"
-	"github.com/owenoclee/tfw-go/cli-client/tfw"
-	"github.com/owenoclee/tfw-go/cli-client/tfw/geo"
+	"github.com/owenoclee/tfw-go"
+	"github.com/owenoclee/tfw-go/geo"
 )
 
 type Box struct {

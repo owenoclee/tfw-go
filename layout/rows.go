@@ -1,8 +1,8 @@
 package layout
 
 import (
-	"github.com/owenoclee/tfw-go/cli-client/tfw"
-	"github.com/owenoclee/tfw-go/cli-client/tfw/geo"
+	"github.com/owenoclee/tfw-go"
+	"github.com/owenoclee/tfw-go/geo"
 )
 
 type Rows struct {
