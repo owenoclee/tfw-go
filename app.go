@@ -6,8 +6,15 @@ import (
 )
 
 type App struct {
-	Child Drawable
-	Quit  chan struct{}
+	child Drawable
+	quit  chan struct{}
+}
+
+func NewApp(quit chan struct{}, child Drawable) *App {
+	return &App{
+		child: child,
+		quit:  quit,
+	}
 }
 
 func (a *App) Run() {
@@ -47,7 +54,7 @@ func (a *App) Run() {
 	s.Show()
 	for {
 		select {
-		case <-a.Quit:
+		case <-a.quit:
 			return
 		case <-redraw:
 			callbacks = a.draw(s)
@@ -58,9 +65,9 @@ func (a *App) Run() {
 
 func (a *App) draw(s Screen) KeyCallbacks {
 	w, h := s.Size()
-	a.Child.SetBounds(geo.Rect{
+	a.child.SetBounds(geo.Rect{
 		TopLeft:     geo.Vector{0, 0},
 		BottomRight: geo.Vector{w - 1, h - 1},
 	})
-	return a.Child.Draw(s)
+	return a.child.Draw(s)
 }

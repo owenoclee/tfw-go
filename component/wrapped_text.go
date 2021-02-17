@@ -8,40 +8,55 @@ import (
 	"github.com/owenoclee/tfw-go/geo"
 )
 
-type WrappedText struct {
-	Bounds  geo.Rect
+type wrappedText struct {
+	bounds  geo.Rect
 	visible bool
-	Text    string
-	Style   *tcell.Style
+	text    string
+	style   *tcell.Style
 }
 
-var _ tfw.Drawable = &WrappedText{}
+func NewWrappedText(text string) *wrappedText {
+	return &wrappedText{
+		visible: true,
+		text:    text,
+	}
+}
 
-func (wt *WrappedText) Draw(s tfw.Screen) tfw.KeyCallbacks {
+func NewWrappedTextWithStyle(text string, style *tcell.Style) *wrappedText {
+	return &wrappedText{
+		visible: true,
+		text:    text,
+		style:   style,
+	}
+}
+
+var _ tfw.Drawable = &wrappedText{}
+
+func (wt *wrappedText) Draw(s tfw.Screen) tfw.KeyCallbacks {
 	style := tcell.StyleDefault
-	if wt.Style != nil {
-		style = *wt.Style
+	if wt.style != nil {
+		style = *wt.style
 	}
 
-	s.SetRegion(wt.Bounds, ' ', style)
+	s.SetRegion(wt.bounds, ' ', style)
 
-	words := strings.Split(wt.Text, " ")
-	cursor := wt.Bounds.TopLeft
+	words := strings.Split(wt.text, " ")
+	cursor := wt.bounds.TopLeft
 	for _, word := range words {
 		needsNewLine := false
 		// request new line if the word wont fit on this line
-		if !wt.Bounds.VectorInBounds(cursor.Add(geo.Vector{len(word) - 1, 0})) {
+		if !wt.bounds.VectorInBounds(cursor.Add(geo.Vector{len(word) - 1, 0})) {
 			needsNewLine = true
 		}
 		// if there are no new lines available or the word cannot fit on a new line,
 		// replace the last written character with an ellipsis
-		if (needsNewLine && cursor.Y+1 > wt.Bounds.BottomRight.Y) || len(word) > wt.Bounds.HorizontalCells() {
+		if (needsNewLine && cursor.Y+1 > wt.bounds.BottomRight.Y) || len(word) > wt.bounds.HorizontalCells() {
 			s.SetContent(cursor.Add(geo.Vector{-2, 0}), '…', style)
 			return nil
 		}
 		// start new line
 		if needsNewLine {
-			cursor.X = wt.Bounds.TopLeft.X
+			cursor.X = wt.bounds.TopLeft.X
 			cursor.Y++
 		}
 		// write text
@@ -54,18 +69,18 @@ func (wt *WrappedText) Draw(s tfw.Screen) tfw.KeyCallbacks {
 	return nil
 }
 
-func (wt *WrappedText) SetBounds(r geo.Rect) {
-	wt.Bounds = r
+func (wt *wrappedText) SetBounds(r geo.Rect) {
+	wt.bounds = r
 }
 
-func (wt *WrappedText) SetVisible(visible bool) {
+func (wt *wrappedText) SetVisible(visible bool) {
 	wt.visible = visible
 }
 
-func (wt *WrappedText) Visible() bool {
+func (wt *wrappedText) Visible() bool {
 	return wt.visible
 }
 
-func (wt *WrappedText) SetText(text string) {
-	wt.Text = text
+func (wt *wrappedText) SetText(text string) {
+	wt.text = text
 }

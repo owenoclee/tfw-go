@@ -5,35 +5,48 @@ import (
 	"github.com/owenoclee/tfw-go/geo"
 )
 
-type Margin struct {
+type margin struct {
 	bounds  geo.Rect
 	visible bool
-	Child   tfw.Drawable
-	Top     int
-	Left    int
-	Right   int
-	Bottom  int
+	child   tfw.Drawable
+	top     int
+	right   int
+	left    int
+	bottom  int
 }
 
-func (m *Margin) Draw(s tfw.Screen) tfw.KeyCallbacks {
-	if !m.Child.Visible() {
+func NewMargin(top, bottom, left, right int, child tfw.Drawable) *margin {
+	return &margin{
+		visible: true,
+		child:   child,
+		top:     top,
+		bottom:  bottom,
+		left:    left,
+		right:   right,
+	}
+}
+
+var _ tfw.Drawable = &margin{}
+
+func (m *margin) Draw(s tfw.Screen) tfw.KeyCallbacks {
+	if !m.child.Visible() {
 		return nil
 	}
-	m.Child.SetBounds(geo.Rect{
-		TopLeft:     m.bounds.TopLeft.Add(geo.Vector{m.Left, m.Top}),
-		BottomRight: m.bounds.BottomRight.Add(geo.Vector{-m.Right, -m.Bottom}),
+	m.child.SetBounds(geo.Rect{
+		TopLeft:     m.bounds.TopLeft.Add(geo.Vector{m.left, m.top}),
+		BottomRight: m.bounds.BottomRight.Add(geo.Vector{-m.right, -m.bottom}),
 	})
-	return m.Child.Draw(s)
+	return m.child.Draw(s)
 }
 
-func (m *Margin) SetBounds(b geo.Rect) {
+func (m *margin) SetBounds(b geo.Rect) {
 	m.bounds = b
 }
 
-func (m *Margin) SetVisible(visible bool) {
+func (m *margin) SetVisible(visible bool) {
 	m.visible = visible
 }
 
-func (m *Margin) Visible() bool {
+func (m *margin) Visible() bool {
 	return m.visible
 }

@@ -5,14 +5,23 @@ import (
 	"github.com/owenoclee/tfw-go/geo"
 )
 
-type VerticalSplit struct {
-	visible  bool
+type verticalSplit struct {
 	bounds   geo.Rect
-	Children []tfw.Drawable
+	visible  bool
+	children []tfw.Drawable
 }
 
-func (vs *VerticalSplit) Draw(s tfw.Screen) tfw.KeyCallbacks {
-	n := len(vs.Children)
+func NewVerticalSplit(children ...tfw.Drawable) *verticalSplit {
+	return &verticalSplit{
+		visible:  true,
+		children: children,
+	}
+}
+
+var _ tfw.Drawable = &verticalSplit{}
+
+func (vs *verticalSplit) Draw(s tfw.Screen) tfw.KeyCallbacks {
+	n := len(vs.children)
 	fullWidth := vs.bounds.HorizontalCells()
 	splitWidth := fullWidth / n
 	splitWidthRemainder := fullWidth % n
@@ -20,7 +29,7 @@ func (vs *VerticalSplit) Draw(s tfw.Screen) tfw.KeyCallbacks {
 	callbacks := tfw.NewKeyCallbacks()
 	topLeftCursor := vs.bounds.TopLeft
 	width := splitWidth + splitWidthRemainder
-	for _, child := range vs.Children {
+	for _, child := range vs.children {
 		if !child.Visible() {
 			continue
 		}
@@ -41,14 +50,14 @@ func (vs *VerticalSplit) Draw(s tfw.Screen) tfw.KeyCallbacks {
 	return callbacks
 }
 
-func (vs *VerticalSplit) SetBounds(r geo.Rect) {
+func (vs *verticalSplit) SetBounds(r geo.Rect) {
 	vs.bounds = r
 }
 
-func (vs *VerticalSplit) SetVisible(visible bool) {
+func (vs *verticalSplit) SetVisible(visible bool) {
 	vs.visible = visible
 }
 
-func (vs *VerticalSplit) Visible() bool {
+func (vs *verticalSplit) Visible() bool {
 	return vs.visible
 }

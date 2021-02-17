@@ -8,68 +8,82 @@ import (
 	"github.com/owenoclee/tfw-go/geo"
 )
 
-type ShortcutOption struct {
+type shortcutOption struct {
 	bounds        geo.Rect
 	visible       bool
-	Shortcut      rune
-	Text          string
-	Callback      func()
-	ShortcutStyle *tcell.Style
-	TextStyle     *tcell.Style
+	shortcut      rune
+	text          string
+	callback      func()
+	shortcutStyle *tcell.Style
+	textStyle     *tcell.Style
 }
 
-var _ tfw.Drawable = &ShortcutOption{}
+func NewShortcutOption(shortcut rune, text string, callback func()) *shortcutOption {
+	return &shortcutOption{
+		visible:  true,
+		shortcut: shortcut,
+		text:     text,
+		callback: callback,
+	}
+}
 
-func (so *ShortcutOption) Draw(s tfw.Screen) tfw.KeyCallbacks {
+func NewShortcutOptionWithStyles(shortcut rune, text string, callback func(), shortcutStyle, textStyle *tcell.Style) *shortcutOption {
+	return &shortcutOption{
+		visible:       true,
+		shortcut:      shortcut,
+		text:          text,
+		callback:      callback,
+		shortcutStyle: shortcutStyle,
+		textStyle:     textStyle,
+	}
+}
+
+var _ tfw.MinBoundableDrawable = &shortcutOption{}
+
+func (so *shortcutOption) Draw(s tfw.Screen) tfw.KeyCallbacks {
 	shortcutStyle := tcell.Style{}.Foreground(tcell.ColorOrange)
-	if so.ShortcutStyle != nil {
-		shortcutStyle = *so.ShortcutStyle
+	if so.shortcutStyle != nil {
+		shortcutStyle = *so.shortcutStyle
 	}
 	textStyle := tcell.StyleDefault
-	if so.TextStyle != nil {
-		textStyle = *so.TextStyle
+	if so.textStyle != nil {
+		textStyle = *so.textStyle
 	}
 
-	shortcutText := WrappedText{
-		Bounds: geo.Rect{
-			TopLeft:     so.bounds.TopLeft,
-			BottomRight: so.bounds.TopLeft.Add(geo.Vector{2, 0}),
-		},
-		Text:  fmt.Sprintf("(%s)", string(so.Shortcut)),
-		Style: &shortcutStyle,
-	}
+	shortcutText := NewWrappedTextWithStyle(fmt.Sprintf("(%s)", string(so.shortcut)), &shortcutStyle)
+	shortcutText.SetBounds(geo.Rect{
+		TopLeft:     so.bounds.TopLeft,
+		BottomRight: so.bounds.TopLeft.Add(geo.Vector{2, 0}),
+	})
 	shortcutText.Draw(s)
 
-	description := WrappedText{
-		Bounds: geo.Rect{
-			TopLeft:     so.bounds.TopLeft.Add(geo.Vector{4, 0}),
-			BottomRight: so.bounds.BottomRight,
-		},
-		Text:  so.Text,
-		Style: &textStyle,
-	}
+	description := NewWrappedTextWithStyle(so.text, &textStyle)
+	description.SetBounds(geo.Rect{
+		TopLeft:     so.bounds.TopLeft.Add(geo.Vector{4, 0}),
+		BottomRight: so.bounds.BottomRight,
+	})
 	description.Draw(s)
 
 	callbacks := tfw.NewKeyCallbacks()
-	callbacks.Register(so.Shortcut, so.Callback)
+	callbacks.Register(so.shortcut, so.callback)
 	return callbacks
 }
 
-func (so *ShortcutOption) SetBounds(r geo.Rect) {
+func (so *shortcutOption) SetBounds(r geo.Rect) {
 	so.bounds = r
 }
 
-func (so *ShortcutOption) SetVisible(visible bool) {
+func (so *shortcutOption) SetVisible(visible bool) {
 	so.visible = visible
 }
 
-func (so *ShortcutOption) Visible() bool {
+func (so *shortcutOption) Visible() bool {
 	return so.visible
 }
 
-func (so *ShortcutOption) MinBounds(topLeft geo.Vector) geo.Rect {
+func (so *shortcutOption) MinBounds(topLeft geo.Vector) geo.Rect {
 	return geo.Rect{
 		TopLeft:     topLeft,
-		BottomRight: topLeft.Add(geo.Vector{3 + len(so.Text), 0}),
+		BottomRight: topLeft.Add(geo.Vector{3 + len(so.text), 0}),
 	}
 }

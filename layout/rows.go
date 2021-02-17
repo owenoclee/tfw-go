@@ -5,16 +5,27 @@ import (
 	"github.com/owenoclee/tfw-go/geo"
 )
 
-type Rows struct {
+type rows struct {
 	bounds   geo.Rect
 	visible  bool
-	Children []tfw.Drawable
-	RowLines int
-	RowGap   int
+	children []tfw.Drawable
+	lines    int
+	gap      int
 }
 
-func (r *Rows) Draw(s tfw.Screen) tfw.KeyCallbacks {
-	if r.RowLines < 1 {
+func NewRows(lines, gap int, children ...tfw.Drawable) *rows {
+	return &rows{
+		visible:  true,
+		children: children,
+		lines:    lines,
+		gap:      gap,
+	}
+}
+
+var _ tfw.Drawable = &rows{}
+
+func (r *rows) Draw(s tfw.Screen) tfw.KeyCallbacks {
+	if r.lines < 1 {
 		panic("RowLines must be greater than 0")
 	}
 
@@ -22,10 +33,10 @@ func (r *Rows) Draw(s tfw.Screen) tfw.KeyCallbacks {
 
 	callbacks := tfw.NewKeyCallbacks()
 	topLeftCursor := r.bounds.TopLeft
-	for _, child := range r.Children {
+	for _, child := range r.children {
 		boundsOfChild := geo.Rect{
 			TopLeft:     topLeftCursor,
-			BottomRight: topLeftCursor.SetX(r.bounds.BottomRight.X).Add(geo.Vector{0, r.RowLines - 1}),
+			BottomRight: topLeftCursor.SetX(r.bounds.BottomRight.X).Add(geo.Vector{0, r.lines - 1}),
 		}
 		if !child.Visible() || !r.bounds.RectInBounds(boundsOfChild) {
 			continue
@@ -33,19 +44,19 @@ func (r *Rows) Draw(s tfw.Screen) tfw.KeyCallbacks {
 		child.SetBounds(boundsOfChild)
 		callbacks.Push(child.Draw(s))
 
-		topLeftCursor = topLeftCursor.Add(geo.Vector{0, r.RowLines + r.RowGap})
+		topLeftCursor = topLeftCursor.Add(geo.Vector{0, r.lines + r.gap})
 	}
 	return callbacks
 }
 
-func (r *Rows) SetBounds(b geo.Rect) {
+func (r *rows) SetBounds(b geo.Rect) {
 	r.bounds = b
 }
 
-func (r *Rows) SetVisible(visible bool) {
+func (r *rows) SetVisible(visible bool) {
 	r.visible = visible
 }
 
-func (r *Rows) Visible() bool {
+func (r *rows) Visible() bool {
 	return r.visible
 }

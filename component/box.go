@@ -6,22 +6,29 @@ import (
 	"github.com/owenoclee/tfw-go/geo"
 )
 
-type Box struct {
-	bounds  geo.Rect
-	visible bool
-	Pieces  map[BoxPiece]rune
-	Child   tfw.Drawable
+type box struct {
+	bounds       geo.Rect
+	visible      bool
+	borderPieces map[BoxPiece]rune
+	child        tfw.Drawable
 }
 
-var _ tfw.Drawable = &Box{}
+func NewBox(borderPieces map[BoxPiece]rune, child tfw.Drawable) *box {
+	if borderPieces == nil {
+		panic("borderPieces cannot be nil")
+	}
+	return &box{
+		visible:      true,
+		borderPieces: borderPieces,
+		child:        child,
+	}
+}
 
-func (b *Box) Draw(s tfw.Screen) tfw.KeyCallbacks {
+var _ tfw.Drawable = &box{}
+
+func (b *box) Draw(s tfw.Screen) tfw.KeyCallbacks {
 	if !b.bounds.IsValid() {
 		panic("invalid Box bounds")
-	}
-	pieces := b.Pieces
-	if pieces == nil {
-		pieces = DefaultBoxPieces
 	}
 
 	s.ClearRegion(b.bounds)
@@ -37,30 +44,30 @@ func (b *Box) Draw(s tfw.Screen) tfw.KeyCallbacks {
 			topCellKind = TopRightBoxPiece
 			bottomCellKind = BottomRightBoxPiece
 		}
-		s.SetContent(geo.Vector{x, b.bounds.TopLeft.Y}, pieces[topCellKind], tcell.StyleDefault)
-		s.SetContent(geo.Vector{x, b.bounds.BottomRight.Y}, pieces[bottomCellKind], tcell.StyleDefault)
+		s.SetContent(geo.Vector{x, b.bounds.TopLeft.Y}, b.borderPieces[topCellKind], tcell.StyleDefault)
+		s.SetContent(geo.Vector{x, b.bounds.BottomRight.Y}, b.borderPieces[bottomCellKind], tcell.StyleDefault)
 	}
 	for y := b.bounds.TopLeft.Y + 1; y <= b.bounds.BottomRight.Y-1; y++ {
-		s.SetContent(geo.Vector{b.bounds.TopLeft.X, y}, pieces[VerticalBoxPiece], tcell.StyleDefault)
-		s.SetContent(geo.Vector{b.bounds.BottomRight.X, y}, pieces[VerticalBoxPiece], tcell.StyleDefault)
+		s.SetContent(geo.Vector{b.bounds.TopLeft.X, y}, b.borderPieces[VerticalBoxPiece], tcell.StyleDefault)
+		s.SetContent(geo.Vector{b.bounds.BottomRight.X, y}, b.borderPieces[VerticalBoxPiece], tcell.StyleDefault)
 	}
 
-	if b.Child == nil || !b.Child.Visible() {
+	if b.child == nil || !b.child.Visible() {
 		return nil
 	}
-	b.Child.SetBounds(b.bounds.Shrink(1))
-	return b.Child.Draw(s)
+	b.child.SetBounds(b.bounds.Shrink(1))
+	return b.child.Draw(s)
 }
 
-func (b *Box) SetBounds(r geo.Rect) {
+func (b *box) SetBounds(r geo.Rect) {
 	b.bounds = r
 }
 
-func (b *Box) SetVisible(visible bool) {
+func (b *box) SetVisible(visible bool) {
 	b.visible = visible
 }
 
-func (b *Box) Visible() bool {
+func (b *box) Visible() bool {
 	return b.visible
 }
 
@@ -75,7 +82,7 @@ const (
 	VerticalBoxPiece
 )
 
-var DefaultBoxPieces = map[BoxPiece]rune{
+var PrettyBorder = map[BoxPiece]rune{
 	TopLeftBoxPiece:     '┌',
 	BottomLeftBoxPiece:  '└',
 	TopRightBoxPiece:    '┐',

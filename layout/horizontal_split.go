@@ -5,14 +5,23 @@ import (
 	"github.com/owenoclee/tfw-go/geo"
 )
 
-type HorizontalSplit struct {
+type horizontalSplit struct {
 	bounds   geo.Rect
 	visible  bool
-	Children []tfw.Drawable
+	children []tfw.Drawable
 }
 
-func (hs *HorizontalSplit) Draw(s tfw.Screen) tfw.KeyCallbacks {
-	n := len(hs.Children)
+func NewHorizontalSplit(children ...tfw.Drawable) *horizontalSplit {
+	return &horizontalSplit{
+		visible:  true,
+		children: children,
+	}
+}
+
+var _ tfw.Drawable = &horizontalSplit{}
+
+func (hs *horizontalSplit) Draw(s tfw.Screen) tfw.KeyCallbacks {
+	n := len(hs.children)
 	fullHeight := hs.bounds.VerticalCells()
 	splitHeight := fullHeight / n
 	splitHeightRemainder := fullHeight % n
@@ -20,7 +29,7 @@ func (hs *HorizontalSplit) Draw(s tfw.Screen) tfw.KeyCallbacks {
 	callbacks := tfw.NewKeyCallbacks()
 	topLeftCursor := hs.bounds.TopLeft
 	height := splitHeight + splitHeightRemainder
-	for _, child := range hs.Children {
+	for _, child := range hs.children {
 		if !child.Visible() {
 			continue
 		}
@@ -41,14 +50,14 @@ func (hs *HorizontalSplit) Draw(s tfw.Screen) tfw.KeyCallbacks {
 	return callbacks
 }
 
-func (hs *HorizontalSplit) SetBounds(r geo.Rect) {
+func (hs *horizontalSplit) SetBounds(r geo.Rect) {
 	hs.bounds = r
 }
 
-func (hs *HorizontalSplit) SetVisible(visible bool) {
+func (hs *horizontalSplit) SetVisible(visible bool) {
 	hs.visible = visible
 }
 
-func (hs *HorizontalSplit) Visible() bool {
+func (hs *horizontalSplit) Visible() bool {
 	return hs.visible
 }

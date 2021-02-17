@@ -5,27 +5,38 @@ import (
 	"github.com/owenoclee/tfw-go/geo"
 )
 
-type Columns struct {
-	bounds      geo.Rect
-	visible     bool
-	Children    []tfw.Drawable
-	ColumnCells int
-	ColumnGap   int
+type columns struct {
+	bounds   geo.Rect
+	visible  bool
+	children []tfw.Drawable
+	cells    int
+	gap      int
 }
 
-func (c *Columns) Draw(s tfw.Screen) tfw.KeyCallbacks {
-	if c.ColumnCells < 1 {
-		panic("ColumnCells must be greater than 0")
+func NewColumns(cells, gap int, children ...tfw.Drawable) *columns {
+	return &columns{
+		visible:  true,
+		children: children,
+		cells:    cells,
+		gap:      gap,
+	}
+}
+
+var _ tfw.Drawable = &columns{}
+
+func (c *columns) Draw(s tfw.Screen) tfw.KeyCallbacks {
+	if c.cells < 1 {
+		panic("cells must be greater than 0")
 	}
 
 	s.ClearRegion(c.bounds)
 
 	callbacks := tfw.NewKeyCallbacks()
 	topLeftCursor := c.bounds.TopLeft
-	for _, child := range c.Children {
+	for _, child := range c.children {
 		boundsOfChild := geo.Rect{
 			TopLeft:     topLeftCursor,
-			BottomRight: topLeftCursor.SetY(c.bounds.BottomRight.Y).Add(geo.Vector{c.ColumnCells - 1, 0}),
+			BottomRight: topLeftCursor.SetY(c.bounds.BottomRight.Y).Add(geo.Vector{c.cells - 1, 0}),
 		}
 		if !child.Visible() || !c.bounds.RectInBounds(boundsOfChild) {
 			continue
@@ -33,19 +44,19 @@ func (c *Columns) Draw(s tfw.Screen) tfw.KeyCallbacks {
 		child.SetBounds(boundsOfChild)
 		callbacks.Push(child.Draw(s))
 
-		topLeftCursor = topLeftCursor.Add(geo.Vector{c.ColumnCells + c.ColumnGap, 0})
+		topLeftCursor = topLeftCursor.Add(geo.Vector{c.cells + c.gap, 0})
 	}
 	return callbacks
 }
 
-func (c *Columns) SetBounds(b geo.Rect) {
+func (c *columns) SetBounds(b geo.Rect) {
 	c.bounds = b
 }
 
-func (c *Columns) SetVisible(visible bool) {
+func (c *columns) SetVisible(visible bool) {
 	c.visible = visible
 }
 
-func (c *Columns) Visible() bool {
+func (c *columns) Visible() bool {
 	return c.visible
 }

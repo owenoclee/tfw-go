@@ -15,90 +15,52 @@ var number = 0
 func main() {
 	exampleStyle := tcell.Style{}.Foreground(tcell.ColorBlue)
 	exampleStyle2 := tcell.Style{}.Foreground(tcell.ColorOrange)
-	leftBoxes := &layout.HorizontalSplit{
-		Children: []tfw.Drawable{
-			&component.Box{
-				Child: &component.WrappedText{
-					Text:  loremIpsum,
-					Style: &exampleStyle,
-				},
-			},
-			&component.Box{
-				Child: &component.WrappedText{
-					Text:  loremIpsum,
-					Style: &exampleStyle2,
-				},
-			},
-		},
-	}
+	leftBoxes := layout.NewHorizontalSplit(
+		component.NewBox(component.PrettyBorder, component.NewWrappedTextWithStyle(loremIpsum, &exampleStyle)),
+		component.NewBox(component.PrettyBorder, component.NewWrappedTextWithStyle(loremIpsum, &exampleStyle2)),
+	)
 
-	numberDisplay := &component.WrappedText{
-		Text: fmt.Sprint(number),
+	numberDisplay := component.NewWrappedText(fmt.Sprint(number))
+	numberDisplayAdd := func(add int) func() {
+		return func() {
+			number += add
+			numberDisplay.SetText(fmt.Sprint(number))
+		}
 	}
-	middleBox := &component.Box{
-		Child: &layout.Margin{
-			Child: &layout.Rows{
-				Children: []tfw.Drawable{
-					numberDisplay,
-					&component.ShortcutOption{
-						Shortcut: 'k',
-						Text:     "Increase number",
-						Callback: func() { number++; numberDisplay.SetText(fmt.Sprint(number)) },
-					},
-					&component.ShortcutOption{
-						Shortcut: 'j',
-						Text:     "Decrease number",
-						Callback: func() { number--; numberDisplay.SetText(fmt.Sprint(number)) },
-					},
-				},
-				RowLines: 2,
-			},
-			Top:    1,
-			Bottom: 1,
-			Left:   2,
-			Right:  2,
-		},
-	}
+	middleBox := component.NewBox(component.PrettyBorder,
+		layout.NewMargin(1, 1, 2, 2,
+			layout.NewRows(2, 0,
+				numberDisplay,
+				component.NewShortcutOption('k', "Increase number", numberDisplayAdd(+1)),
+				component.NewShortcutOption('j', "Decrease number", numberDisplayAdd(-1)),
+			),
+		),
+	)
 
-	rightBox := &component.Box{
-		Child: &layout.Columns{
-			Children: []tfw.Drawable{
-				&component.WrappedText{
-					Text: "column 1",
-				},
-				&component.WrappedText{
-					Text: "column 2",
-				},
-				&component.WrappedText{
-					Text: "column 3",
-				},
-			},
-			ColumnCells: 12,
-		},
-	}
+	rightBox := component.NewBox(component.PrettyBorder,
+		layout.NewColumns(12, 0,
+			component.NewWrappedText("column 1"),
+			component.NewWrappedText("column 2"),
+			component.NewWrappedText("column 3"),
+		),
+	)
 
 	quit := make(chan struct{})
-	app := &tfw.App{
-		Child: &layout.WithToolbar{
-			Primary: &component.Box{
-				Child: &layout.VerticalSplit{
-					Children: []tfw.Drawable{
-						leftBoxes,
-						middleBox,
-						rightBox,
-					},
-				},
-			},
-			BarElements: []tfw.MinBoundableDrawable{
-				&component.ShortcutOption{
-					Shortcut: 'q',
-					Text:     "quit",
-					Callback: func() { close(quit) },
-				},
-			},
-			ElementGap: 1,
-		},
-		Quit: quit,
-	}
+	app := tfw.NewApp(quit,
+		layout.NewWithToolbar(1,
+			component.NewBox(component.PrettyBorder,
+				layout.NewVerticalSplit(
+					leftBoxes,
+					middleBox,
+					rightBox,
+				),
+			),
+			component.NewShortcutOption(
+				'q',
+				"quit",
+				func() { close(quit) },
+			),
+		),
+	)
 	app.Run()
 }
