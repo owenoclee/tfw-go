@@ -7,9 +7,10 @@ import (
 )
 
 type Box struct {
-	bounds geo.Rect
-	Pieces map[BoxPiece]rune
-	Child  tfw.Drawable
+	bounds  geo.Rect
+	visible bool
+	Pieces  map[BoxPiece]rune
+	Child   tfw.Drawable
 }
 
 var _ tfw.Drawable = &Box{}
@@ -44,7 +45,7 @@ func (b *Box) Draw(s tfw.Screen) tfw.KeyCallbacks {
 		s.SetContent(geo.Vector{b.bounds.BottomRight.X, y}, pieces[VerticalBoxPiece], tcell.StyleDefault)
 	}
 
-	if b.Child == nil {
+	if b.Child == nil || !b.Child.Visible() {
 		return nil
 	}
 	b.Child.SetBounds(b.bounds.Shrink(1))
@@ -53,6 +54,14 @@ func (b *Box) Draw(s tfw.Screen) tfw.KeyCallbacks {
 
 func (b *Box) SetBounds(r geo.Rect) {
 	b.bounds = r
+}
+
+func (b *Box) SetVisible(visible bool) {
+	b.visible = visible
+}
+
+func (b *Box) Visible() bool {
+	return b.visible
 }
 
 type BoxPiece int

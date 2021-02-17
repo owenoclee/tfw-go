@@ -10,6 +10,7 @@ import (
 
 type ShortcutOption struct {
 	bounds        geo.Rect
+	visible       bool
 	Shortcut      rune
 	Text          string
 	Callback      func()
@@ -56,6 +57,14 @@ func (so *ShortcutOption) Draw(s tfw.Screen) tfw.KeyCallbacks {
 
 func (so *ShortcutOption) SetBounds(r geo.Rect) {
 	so.bounds = r
+}
+
+func (so *ShortcutOption) SetVisible(visible bool) {
+	so.visible = visible
+}
+
+func (so *ShortcutOption) Visible() bool {
+	return so.visible
 }
 
 func (so *ShortcutOption) MinBounds(topLeft geo.Vector) geo.Rect {

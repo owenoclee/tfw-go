@@ -6,6 +6,7 @@ import (
 )
 
 type VerticalSplit struct {
+	visible  bool
 	bounds   geo.Rect
 	Children []tfw.Drawable
 }
@@ -19,7 +20,10 @@ func (vs *VerticalSplit) Draw(s tfw.Screen) tfw.KeyCallbacks {
 	callbacks := tfw.NewKeyCallbacks()
 	topLeftCursor := vs.bounds.TopLeft
 	width := splitWidth + splitWidthRemainder
-	for _, c := range vs.Children {
+	for _, child := range vs.Children {
+		if !child.Visible() {
+			continue
+		}
 		bottomLeft := topLeftCursor.SetY(vs.bounds.BottomRight.Y)
 		bounds := geo.Rect{
 			TopLeft: topLeftCursor,
@@ -28,8 +32,8 @@ func (vs *VerticalSplit) Draw(s tfw.Screen) tfw.KeyCallbacks {
 				0,
 			}),
 		}
-		c.SetBounds(bounds)
-		callbacks.Push(c.Draw(s))
+		child.SetBounds(bounds)
+		callbacks.Push(child.Draw(s))
 
 		topLeftCursor = topLeftCursor.Add(geo.Vector{width, 0})
 		width = splitWidth
@@ -39,4 +43,12 @@ func (vs *VerticalSplit) Draw(s tfw.Screen) tfw.KeyCallbacks {
 
 func (vs *VerticalSplit) SetBounds(r geo.Rect) {
 	vs.bounds = r
+}
+
+func (vs *VerticalSplit) SetVisible(visible bool) {
+	vs.visible = visible
+}
+
+func (vs *VerticalSplit) Visible() bool {
+	return vs.visible
 }

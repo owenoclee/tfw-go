@@ -6,15 +6,19 @@ import (
 )
 
 type Margin struct {
-	bounds geo.Rect
-	Child  tfw.Drawable
-	Top    int
-	Left   int
-	Right  int
-	Bottom int
+	bounds  geo.Rect
+	visible bool
+	Child   tfw.Drawable
+	Top     int
+	Left    int
+	Right   int
+	Bottom  int
 }
 
 func (m *Margin) Draw(s tfw.Screen) tfw.KeyCallbacks {
+	if !m.Child.Visible() {
+		return nil
+	}
 	m.Child.SetBounds(geo.Rect{
 		TopLeft:     m.bounds.TopLeft.Add(geo.Vector{m.Left, m.Top}),
 		BottomRight: m.bounds.BottomRight.Add(geo.Vector{-m.Right, -m.Bottom}),
@@ -24,4 +28,12 @@ func (m *Margin) Draw(s tfw.Screen) tfw.KeyCallbacks {
 
 func (m *Margin) SetBounds(b geo.Rect) {
 	m.bounds = b
+}
+
+func (m *Margin) SetVisible(visible bool) {
+	m.visible = visible
+}
+
+func (m *Margin) Visible() bool {
+	return m.visible
 }

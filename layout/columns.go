@@ -7,6 +7,7 @@ import (
 
 type Columns struct {
 	bounds      geo.Rect
+	visible     bool
 	Children    []tfw.Drawable
 	ColumnCells int
 	ColumnGap   int
@@ -26,8 +27,8 @@ func (c *Columns) Draw(s tfw.Screen) tfw.KeyCallbacks {
 			TopLeft:     topLeftCursor,
 			BottomRight: topLeftCursor.SetY(c.bounds.BottomRight.Y).Add(geo.Vector{c.ColumnCells - 1, 0}),
 		}
-		if !c.bounds.RectInBounds(boundsOfChild) {
-			break
+		if !child.Visible() || !c.bounds.RectInBounds(boundsOfChild) {
+			continue
 		}
 		child.SetBounds(boundsOfChild)
 		callbacks.Push(child.Draw(s))
@@ -39,4 +40,12 @@ func (c *Columns) Draw(s tfw.Screen) tfw.KeyCallbacks {
 
 func (c *Columns) SetBounds(b geo.Rect) {
 	c.bounds = b
+}
+
+func (c *Columns) SetVisible(visible bool) {
+	c.visible = visible
+}
+
+func (c *Columns) Visible() bool {
+	return c.visible
 }

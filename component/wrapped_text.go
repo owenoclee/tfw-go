@@ -9,9 +9,10 @@ import (
 )
 
 type WrappedText struct {
-	Bounds geo.Rect
-	Text   string
-	Style  *tcell.Style
+	Bounds  geo.Rect
+	visible bool
+	Text    string
+	Style   *tcell.Style
 }
 
 var _ tfw.Drawable = &WrappedText{}
@@ -55,6 +56,14 @@ func (wt *WrappedText) Draw(s tfw.Screen) tfw.KeyCallbacks {
 
 func (wt *WrappedText) SetBounds(r geo.Rect) {
 	wt.Bounds = r
+}
+
+func (wt *WrappedText) SetVisible(visible bool) {
+	wt.visible = visible
+}
+
+func (wt *WrappedText) Visible() bool {
+	return wt.visible
 }
 
 func (wt *WrappedText) SetText(text string) {

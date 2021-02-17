@@ -5,14 +5,9 @@ import (
 	"github.com/owenoclee/tfw-go/geo"
 )
 
-type BarElem struct {
-	Shortcut rune
-	Text     string
-	Callback func()
-}
-
 type WithToolbar struct {
 	bounds      geo.Rect
+	visible     bool
 	Primary     tfw.Drawable
 	BarElements []tfw.MinBoundableDrawable
 	ElementGap  int
@@ -26,6 +21,9 @@ func (wt *WithToolbar) Draw(s tfw.Screen) tfw.KeyCallbacks {
 	callbacks := tfw.NewKeyCallbacks()
 	topLeftCursor := barBounds.TopLeft
 	for _, elem := range wt.BarElements {
+		if !elem.Visible() {
+			continue
+		}
 		bounds := elem.MinBounds(topLeftCursor)
 		elem.SetBounds(bounds)
 		callbacks.Push(elem.Draw(s))
@@ -43,4 +41,12 @@ func (wt *WithToolbar) Draw(s tfw.Screen) tfw.KeyCallbacks {
 
 func (wt *WithToolbar) SetBounds(b geo.Rect) {
 	wt.bounds = b
+}
+
+func (wt *WithToolbar) SetVisible(visible bool) {
+	wt.visible = visible
+}
+
+func (wt *WithToolbar) Visible() bool {
+	return wt.visible
 }

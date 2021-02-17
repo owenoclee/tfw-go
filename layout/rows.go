@@ -7,6 +7,7 @@ import (
 
 type Rows struct {
 	bounds   geo.Rect
+	visible  bool
 	Children []tfw.Drawable
 	RowLines int
 	RowGap   int
@@ -21,16 +22,16 @@ func (r *Rows) Draw(s tfw.Screen) tfw.KeyCallbacks {
 
 	callbacks := tfw.NewKeyCallbacks()
 	topLeftCursor := r.bounds.TopLeft
-	for _, c := range r.Children {
+	for _, child := range r.Children {
 		boundsOfChild := geo.Rect{
 			TopLeft:     topLeftCursor,
 			BottomRight: topLeftCursor.SetX(r.bounds.BottomRight.X).Add(geo.Vector{0, r.RowLines - 1}),
 		}
-		if !r.bounds.RectInBounds(boundsOfChild) {
-			break
+		if !child.Visible() || !r.bounds.RectInBounds(boundsOfChild) {
+			continue
 		}
-		c.SetBounds(boundsOfChild)
-		callbacks.Push(c.Draw(s))
+		child.SetBounds(boundsOfChild)
+		callbacks.Push(child.Draw(s))
 
 		topLeftCursor = topLeftCursor.Add(geo.Vector{0, r.RowLines + r.RowGap})
 	}
@@ -39,4 +40,12 @@ func (r *Rows) Draw(s tfw.Screen) tfw.KeyCallbacks {
 
 func (r *Rows) SetBounds(b geo.Rect) {
 	r.bounds = b
+}
+
+func (r *Rows) SetVisible(visible bool) {
+	r.visible = visible
+}
+
+func (r *Rows) Visible() bool {
+	return r.visible
 }

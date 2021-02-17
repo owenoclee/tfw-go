@@ -7,6 +7,7 @@ import (
 
 type HorizontalSplit struct {
 	bounds   geo.Rect
+	visible  bool
 	Children []tfw.Drawable
 }
 
@@ -19,7 +20,10 @@ func (hs *HorizontalSplit) Draw(s tfw.Screen) tfw.KeyCallbacks {
 	callbacks := tfw.NewKeyCallbacks()
 	topLeftCursor := hs.bounds.TopLeft
 	height := splitHeight + splitHeightRemainder
-	for _, c := range hs.Children {
+	for _, child := range hs.Children {
+		if !child.Visible() {
+			continue
+		}
 		topRight := topLeftCursor.SetX(hs.bounds.BottomRight.X)
 		bounds := geo.Rect{
 			TopLeft: topLeftCursor,
@@ -28,8 +32,8 @@ func (hs *HorizontalSplit) Draw(s tfw.Screen) tfw.KeyCallbacks {
 				height - 1,
 			}),
 		}
-		c.SetBounds(bounds)
-		callbacks.Push(c.Draw(s))
+		child.SetBounds(bounds)
+		callbacks.Push(child.Draw(s))
 
 		topLeftCursor = topLeftCursor.Add(geo.Vector{0, height})
 		height = splitHeight
@@ -39,4 +43,12 @@ func (hs *HorizontalSplit) Draw(s tfw.Screen) tfw.KeyCallbacks {
 
 func (hs *HorizontalSplit) SetBounds(r geo.Rect) {
 	hs.bounds = r
+}
+
+func (hs *HorizontalSplit) SetVisible(visible bool) {
+	hs.visible = visible
+}
+
+func (hs *HorizontalSplit) Visible() bool {
+	return hs.visible
 }
