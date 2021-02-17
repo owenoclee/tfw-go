@@ -18,7 +18,7 @@ func NewHorizontalSplit(children ...tfw.Drawable) *horizontalSplit {
 	}
 }
 
-var _ tfw.Drawable = &horizontalSplit{}
+var _ tfw.DrawableWithChildren = &horizontalSplit{}
 
 func (hs *horizontalSplit) Draw(s tfw.Screen) tfw.KeyCallbacks {
 	n := len(hs.children)
@@ -60,4 +60,15 @@ func (hs *horizontalSplit) SetVisible(visible bool) {
 
 func (hs *horizontalSplit) Visible() bool {
 	return hs.visible
+}
+
+func (hs *horizontalSplit) SetChildAt(index int, child tfw.Drawable) {
+	hs.children[index] = child
+}
+
+func (hs *horizontalSplit) ChildAt(index int) tfw.Drawable {
+	if len(hs.children) > index {
+		return hs.children[index]
+	}
+	return nil
 }

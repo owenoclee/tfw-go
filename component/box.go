@@ -24,7 +24,7 @@ func NewBox(borderPieces map[BoxPiece]rune, child tfw.Drawable) *box {
 	}
 }
 
-var _ tfw.Drawable = &box{}
+var _ tfw.DrawableWithChild = &box{}
 
 func (b *box) Draw(s tfw.Screen) tfw.KeyCallbacks {
 	if !b.bounds.IsValid() {
@@ -69,6 +69,14 @@ func (b *box) SetVisible(visible bool) {
 
 func (b *box) Visible() bool {
 	return b.visible
+}
+
+func (b *box) SetChild(child tfw.Drawable) {
+	b.child = child
+}
+
+func (b *box) Child() tfw.Drawable {
+	return b.child
 }
 
 type BoxPiece int

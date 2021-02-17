@@ -26,7 +26,7 @@ func NewMargin(top, bottom, left, right int, child tfw.Drawable) *margin {
 	}
 }
 
-var _ tfw.Drawable = &margin{}
+var _ tfw.DrawableWithChild = &margin{}
 
 func (m *margin) Draw(s tfw.Screen) tfw.KeyCallbacks {
 	if !m.child.Visible() {
@@ -49,4 +49,12 @@ func (m *margin) SetVisible(visible bool) {
 
 func (m *margin) Visible() bool {
 	return m.visible
+}
+
+func (m *margin) SetChild(child tfw.Drawable) {
+	m.child = child
+}
+
+func (m *margin) Child() tfw.Drawable {
+	return m.child
 }

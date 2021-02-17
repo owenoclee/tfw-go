@@ -22,7 +22,7 @@ func NewRows(lines, gap int, children ...tfw.Drawable) *rows {
 	}
 }
 
-var _ tfw.Drawable = &rows{}
+var _ tfw.DrawableWithChildren = &rows{}
 
 func (r *rows) Draw(s tfw.Screen) tfw.KeyCallbacks {
 	if r.lines < 1 {
@@ -59,4 +59,15 @@ func (r *rows) SetVisible(visible bool) {
 
 func (r *rows) Visible() bool {
 	return r.visible
+}
+
+func (r *rows) SetChildAt(index int, child tfw.Drawable) {
+	r.children[index] = child
+}
+
+func (r *rows) ChildAt(index int) tfw.Drawable {
+	if len(r.children) > index {
+		return r.children[index]
+	}
+	return nil
 }

@@ -18,7 +18,7 @@ func NewVerticalSplit(children ...tfw.Drawable) *verticalSplit {
 	}
 }
 
-var _ tfw.Drawable = &verticalSplit{}
+var _ tfw.DrawableWithChildren = &verticalSplit{}
 
 func (vs *verticalSplit) Draw(s tfw.Screen) tfw.KeyCallbacks {
 	n := len(vs.children)
@@ -60,4 +60,15 @@ func (vs *verticalSplit) SetVisible(visible bool) {
 
 func (vs *verticalSplit) Visible() bool {
 	return vs.visible
+}
+
+func (vs *verticalSplit) SetChildAt(index int, child tfw.Drawable) {
+	vs.children[index] = child
+}
+
+func (vs *verticalSplit) ChildAt(index int) tfw.Drawable {
+	if len(vs.children) > index {
+		return vs.children[index]
+	}
+	return nil
 }

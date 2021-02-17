@@ -22,7 +22,7 @@ func NewColumns(cells, gap int, children ...tfw.Drawable) *columns {
 	}
 }
 
-var _ tfw.Drawable = &columns{}
+var _ tfw.DrawableWithChildren = &columns{}
 
 func (c *columns) Draw(s tfw.Screen) tfw.KeyCallbacks {
 	if c.cells < 1 {
@@ -59,4 +59,15 @@ func (c *columns) SetVisible(visible bool) {
 
 func (c *columns) Visible() bool {
 	return c.visible
+}
+
+func (c *columns) SetChildAt(index int, child tfw.Drawable) {
+	c.children[index] = child
+}
+
+func (c *columns) ChildAt(index int) tfw.Drawable {
+	if len(c.children) > index {
+		return c.children[index]
+	}
+	return nil
 }

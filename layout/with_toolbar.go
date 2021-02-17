@@ -22,7 +22,7 @@ func NewWithToolbar(gap int, child tfw.Drawable, barElements ...tfw.MinBoundable
 	}
 }
 
-var _ tfw.Drawable = &withToolbar{}
+var _ tfw.DrawableWithChild = &withToolbar{}
 
 func (wt *withToolbar) Draw(s tfw.Screen) tfw.KeyCallbacks {
 	barBounds := geo.Rect{
@@ -60,4 +60,12 @@ func (wt *withToolbar) SetVisible(visible bool) {
 
 func (wt *withToolbar) Visible() bool {
 	return wt.visible
+}
+
+func (wt *withToolbar) SetChild(child tfw.Drawable) {
+	wt.child = child
+}
+
+func (wt *withToolbar) Child() tfw.Drawable {
+	return wt.child
 }
