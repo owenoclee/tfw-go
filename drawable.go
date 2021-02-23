@@ -19,8 +19,11 @@ type HasChild interface {
 }
 
 type HasChildren interface {
+	AppendChild(child Drawable)
+	PrependChild(child Drawable)
 	SetChildAt(index int, child Drawable)
 	ChildAt(index int) Drawable
+	ChildrenLen() int
 }
 
 type HasText interface {

@@ -63,6 +63,14 @@ func (vs *verticalSplit) Visible() bool {
 	return vs.visible
 }
 
+func (vs *verticalSplit) AppendChild(child tfw.Drawable) {
+	vs.children = append(vs.children, child)
+}
+
+func (vs *verticalSplit) PrependChild(child tfw.Drawable) {
+	vs.children = append([]tfw.Drawable{child}, vs.children...)
+}
+
 func (vs *verticalSplit) SetChildAt(index int, child tfw.Drawable) {
 	vs.children[index] = child
 }
@@ -72,4 +80,8 @@ func (vs *verticalSplit) ChildAt(index int) tfw.Drawable {
 		return vs.children[index]
 	}
 	return nil
+}
+
+func (vs *verticalSplit) ChildrenLen() int {
+	return len(vs.children)
 }

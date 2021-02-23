@@ -63,6 +63,14 @@ func (hs *horizontalSplit) Visible() bool {
 	return hs.visible
 }
 
+func (hs *horizontalSplit) AppendChild(child tfw.Drawable) {
+	hs.children = append(hs.children, child)
+}
+
+func (hs *horizontalSplit) PrependChild(child tfw.Drawable) {
+	hs.children = append([]tfw.Drawable{child}, hs.children...)
+}
+
 func (hs *horizontalSplit) SetChildAt(index int, child tfw.Drawable) {
 	hs.children[index] = child
 }
@@ -72,4 +80,8 @@ func (hs *horizontalSplit) ChildAt(index int) tfw.Drawable {
 		return hs.children[index]
 	}
 	return nil
+}
+
+func (hs *horizontalSplit) ChildrenLen() int {
+	return len(hs.children)
 }

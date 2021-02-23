@@ -62,6 +62,14 @@ func (c *columns) Visible() bool {
 	return c.visible
 }
 
+func (c *columns) AppendChild(child tfw.Drawable) {
+	c.children = append(c.children, child)
+}
+
+func (c *columns) PrependChild(child tfw.Drawable) {
+	c.children = append([]tfw.Drawable{child}, c.children...)
+}
+
 func (c *columns) SetChildAt(index int, child tfw.Drawable) {
 	c.children[index] = child
 }
@@ -71,4 +79,8 @@ func (c *columns) ChildAt(index int) tfw.Drawable {
 		return c.children[index]
 	}
 	return nil
+}
+
+func (c *columns) ChildrenLen() int {
+	return len(c.children)
 }
