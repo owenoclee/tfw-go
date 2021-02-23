@@ -8,6 +8,9 @@ import (
 	"github.com/owenoclee/tfw-go/geo"
 )
 
+var _ tfw.Drawable = (*shortcutOption)(nil)
+var _ tfw.MinBoundable = (*shortcutOption)(nil)
+
 type shortcutOption struct {
 	bounds        geo.Rect
 	visible       bool
@@ -37,8 +40,6 @@ func NewShortcutOptionWithStyles(shortcut rune, text string, callback func(), sh
 		textStyle:     textStyle,
 	}
 }
-
-var _ tfw.MinBoundableDrawable = &shortcutOption{}
 
 func (so *shortcutOption) Draw(s tfw.Screen) tfw.KeyCallbacks {
 	shortcutStyle := tcell.Style{}.Foreground(tcell.ColorOrange)

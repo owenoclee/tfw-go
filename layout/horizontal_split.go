@@ -5,6 +5,9 @@ import (
 	"github.com/owenoclee/tfw-go/geo"
 )
 
+var _ tfw.Drawable = (*horizontalSplit)(nil)
+var _ tfw.HasChildren = (*horizontalSplit)(nil)
+
 type horizontalSplit struct {
 	bounds   geo.Rect
 	visible  bool
@@ -17,8 +20,6 @@ func NewHorizontalSplit(children ...tfw.Drawable) *horizontalSplit {
 		children: children,
 	}
 }
-
-var _ tfw.DrawableWithChildren = &horizontalSplit{}
 
 func (hs *horizontalSplit) Draw(s tfw.Screen) tfw.KeyCallbacks {
 	n := len(hs.children)

@@ -5,6 +5,9 @@ import (
 	"github.com/owenoclee/tfw-go/geo"
 )
 
+var _ tfw.Drawable = (*margin)(nil)
+var _ tfw.HasChild = (*margin)(nil)
+
 type margin struct {
 	bounds  geo.Rect
 	visible bool
@@ -25,8 +28,6 @@ func NewMargin(top, bottom, left, right int, child tfw.Drawable) *margin {
 		right:   right,
 	}
 }
-
-var _ tfw.DrawableWithChild = &margin{}
 
 func (m *margin) Draw(s tfw.Screen) tfw.KeyCallbacks {
 	if !m.child.Visible() {

@@ -8,6 +8,9 @@ import (
 	"github.com/owenoclee/tfw-go/geo"
 )
 
+var _ tfw.Drawable = (*wrappedText)(nil)
+var _ tfw.HasText = (*wrappedText)(nil)
+
 type wrappedText struct {
 	bounds  geo.Rect
 	visible bool
@@ -29,8 +32,6 @@ func NewWrappedTextWithStyle(text string, style *tcell.Style) *wrappedText {
 		style:   style,
 	}
 }
-
-var _ tfw.Drawable = &wrappedText{}
 
 func (wt *wrappedText) Draw(s tfw.Screen) tfw.KeyCallbacks {
 	style := tcell.StyleDefault
@@ -83,4 +84,8 @@ func (wt *wrappedText) Visible() bool {
 
 func (wt *wrappedText) SetText(text string) {
 	wt.text = text
+}
+
+func (wt *wrappedText) Text() string {
+	return wt.text
 }

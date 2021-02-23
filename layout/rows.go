@@ -5,6 +5,9 @@ import (
 	"github.com/owenoclee/tfw-go/geo"
 )
 
+var _ tfw.Drawable = (*rows)(nil)
+var _ tfw.HasChildren = (*rows)(nil)
+
 type rows struct {
 	bounds   geo.Rect
 	visible  bool
@@ -21,8 +24,6 @@ func NewRows(lines, gap int, children ...tfw.Drawable) *rows {
 		gap:      gap,
 	}
 }
-
-var _ tfw.DrawableWithChildren = &rows{}
 
 func (r *rows) Draw(s tfw.Screen) tfw.KeyCallbacks {
 	if r.lines < 1 {

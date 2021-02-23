@@ -5,6 +5,9 @@ import (
 	"github.com/owenoclee/tfw-go/geo"
 )
 
+var _ tfw.Drawable = (*columns)(nil)
+var _ tfw.HasChildren = (*columns)(nil)
+
 type columns struct {
 	bounds   geo.Rect
 	visible  bool
@@ -21,8 +24,6 @@ func NewColumns(cells, gap int, children ...tfw.Drawable) *columns {
 		gap:      gap,
 	}
 }
-
-var _ tfw.DrawableWithChildren = &columns{}
 
 func (c *columns) Draw(s tfw.Screen) tfw.KeyCallbacks {
 	if c.cells < 1 {

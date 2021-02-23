@@ -6,6 +6,9 @@ import (
 	"github.com/owenoclee/tfw-go/geo"
 )
 
+var _ tfw.Drawable = (*box)(nil)
+var _ tfw.HasChild = (*box)(nil)
+
 type box struct {
 	bounds       geo.Rect
 	visible      bool
@@ -23,8 +26,6 @@ func NewBox(borderPieces map[BoxPiece]rune, child tfw.Drawable) *box {
 		child:        child,
 	}
 }
-
-var _ tfw.DrawableWithChild = &box{}
 
 func (b *box) Draw(s tfw.Screen) tfw.KeyCallbacks {
 	if !b.bounds.IsValid() {

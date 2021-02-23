@@ -9,19 +9,21 @@ type Drawable interface {
 	Visible() bool
 }
 
-type MinBoundableDrawable interface {
-	Drawable
+type MinBoundable interface {
 	MinBounds(topLeft geo.Vector) geo.Rect
 }
 
-type DrawableWithChild interface {
-	Drawable
+type HasChild interface {
 	SetChild(child Drawable)
 	Child() Drawable
 }
 
-type DrawableWithChildren interface {
-	Drawable
+type HasChildren interface {
 	SetChildAt(index int, child Drawable)
 	ChildAt(index int) Drawable
+}
+
+type HasText interface {
+	SetText(text string)
+	Text() string
 }

@@ -5,15 +5,23 @@ import (
 	"github.com/owenoclee/tfw-go/geo"
 )
 
+var _ tfw.Drawable = (*withToolbar)(nil)
+var _ tfw.HasChild = (*withToolbar)(nil)
+
+type minBoundableDrawable interface {
+	tfw.Drawable
+	tfw.MinBoundable
+}
+
 type withToolbar struct {
 	bounds      geo.Rect
 	visible     bool
 	child       tfw.Drawable
-	barElements []tfw.MinBoundableDrawable
+	barElements []minBoundableDrawable
 	gap         int
 }
 
-func NewWithToolbar(gap int, child tfw.Drawable, barElements ...tfw.MinBoundableDrawable) *withToolbar {
+func NewWithToolbar(gap int, child tfw.Drawable, barElements ...minBoundableDrawable) *withToolbar {
 	return &withToolbar{
 		visible:     true,
 		child:       child,
@@ -21,8 +29,6 @@ func NewWithToolbar(gap int, child tfw.Drawable, barElements ...tfw.MinBoundable
 		gap:         gap,
 	}
 }
-
-var _ tfw.DrawableWithChild = &withToolbar{}
 
 func (wt *withToolbar) Draw(s tfw.Screen) tfw.KeyCallbacks {
 	barBounds := geo.Rect{
